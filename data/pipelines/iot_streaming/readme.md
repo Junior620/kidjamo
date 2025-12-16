@@ -1,0 +1,1 @@
+# Scripts ingestion via Kinesis/Kafka 

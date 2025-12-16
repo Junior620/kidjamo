@@ -1,0 +1,1 @@
+# Schéma GraphQL (si besoin)

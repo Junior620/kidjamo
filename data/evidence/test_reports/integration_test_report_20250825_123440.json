@@ -1,0 +1,77 @@
+{
+  "start_time": "2025-08-25T12:34:17.561968",
+  "kafka_available": true,
+  "tests": [
+    {
+      "name": "API Health Check",
+      "success": true,
+      "message": "Health check passed (Kafka: False)",
+      "duration": 2.0460402965545654,
+      "timestamp": "2025-08-25T12:34:19.714756"
+    },
+    {
+      "name": "API Measurements Normal",
+      "success": true,
+      "message": "Normal measurement processed successfully (quality: 92.0%)",
+      "duration": 2.044038772583008,
+      "timestamp": "2025-08-25T12:34:21.758794"
+    },
+    {
+      "name": "API Measurements Critical",
+      "success": true,
+      "message": "Critical measurement processed (3 alerts, 2.064s)",
+      "duration": 2.0635993480682373,
+      "timestamp": "2025-08-25T12:34:23.822931"
+    },
+    {
+      "name": "API Ingest Endpoint",
+      "success": true,
+      "message": "Ingest endpoint working (alerts: 0)",
+      "duration": 2.220500946044922,
+      "timestamp": "2025-08-25T12:34:26.043432"
+    },
+    {
+      "name": "Kafka Message Consumption",
+      "success": true,
+      "message": "Kafka message consumed successfully (1 messages)",
+      "duration": 2.1903932094573975,
+      "timestamp": "2025-08-25T12:34:28.233825"
+    },
+    {
+      "name": "Database Insertion",
+      "success": true,
+      "message": "Database insertion successful (1 records)",
+      "duration": 4.156801223754883,
+      "timestamp": "2025-08-25T12:34:32.392630"
+    },
+    {
+      "name": "Critical Alerts Workflow",
+      "success": true,
+      "message": "Critical alerts workflow successful (API: 3, DB: 1)",
+      "duration": 4.16975736618042,
+      "timestamp": "2025-08-25T12:34:36.562387"
+    },
+    {
+      "name": "API Metrics Endpoint",
+      "success": true,
+      "message": "Metrics endpoint working (uptime: 26.9s, msgs: 5, kafka: False)",
+      "duration": 2.0494372844696045,
+      "timestamp": "2025-08-25T12:34:38.611825"
+    },
+    {
+      "name": "Error Handling",
+      "success": true,
+      "message": "Error handling working (rejected with HTTP 422)",
+      "duration": 2.060833215713501,
+      "timestamp": "2025-08-25T12:34:40.674197"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 9,
+    "failed": 0,
+    "errors": 0,
+    "success_rate": 100.0,
+    "duration": "0:00:23.112229"
+  }
+}

@@ -1,0 +1,1 @@
+# JSONSchema/Avro/OpenAPI (événements & API)

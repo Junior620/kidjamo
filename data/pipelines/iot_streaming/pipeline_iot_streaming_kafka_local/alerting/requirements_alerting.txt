@@ -1,0 +1,39 @@
+# Dépendances pour le Système d'Alertes Composées
+# Installation: pip install -r requirements_alerting.txt
+
+# Base de données
+psycopg2-binary==2.9.7
+
+# AWS Services
+boto3==1.28.57
+botocore==1.31.57
+
+# Async et utilitaires
+asyncio-mqtt==0.11.1
+aiofiles==23.2.1
+
+# Logging et monitoring
+structlog==23.1.0
+prometheus-client==0.17.1
+
+# Tests
+pytest==7.4.2
+pytest-asyncio==0.21.1
+pytest-mock==3.11.1
+
+# Validation et parsing
+pydantic==2.3.0
+python-dotenv==1.0.0
+
+# Calculs scientifiques (pour l'analyse des tendances)
+numpy==1.24.3
+scipy==1.11.2
+
+# Dates et temps
+python-dateutil==2.8.2
+
+# Email et templating
+jinja2==3.1.2
+
+# Configuration YAML
+PyYAML==6.0.1

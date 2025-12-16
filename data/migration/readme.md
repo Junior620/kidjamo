@@ -1,0 +1,1 @@
+# SQL migrations (PostgreSQL/Timescale)

@@ -1,0 +1,99 @@
+# Configuration principale dbt pour Kidjamo
+name: 'kidjamo_analytics'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'kidjamo'
+
+# These configurations specify where dbt should look for different types of files.
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Configuring models
+models:
+  kidjamo_analytics:
+    # Config indicated by + and applies to all files under models/...
+    +materialized: view
+
+    # Configuration for staging models (raw -> bronze)
+    staging:
+      +materialized: view
+      +tags: ["staging", "hourly"]
+
+    # Configuration for intermediate models (bronze -> silver)
+    intermediate:
+      +materialized: view
+      +tags: ["intermediate", "daily"]
+
+    # Configuration for marts models (silver -> gold)
+    marts:
+      +materialized: table
+      +tags: ["marts", "production"]
+
+      # Medical analytics models
+      medical:
+        +materialized: table
+        +tags: ["medical", "critical"]
+
+      # Patient dashboards
+      dashboards:
+        +materialized: table
+        +tags: ["dashboard", "realtime"]
+
+# Seeds configuration (reference data)
+seeds:
+  kidjamo_analytics:
+    +column_types:
+      id: varchar(50)
+    medical_thresholds:
+      +column_types:
+        age_min: integer
+        age_max: integer
+        threshold_value: numeric(5,2)
+
+# Test configurations
+tests:
+  +store_failures: true
+  +schema: dbt_test_failures
+
+# Snapshot configurations
+snapshots:
+  kidjamo_analytics:
+    +target_schema: snapshots
+    +strategy: timestamp
+    +updated_at: updated_at
+
+# Documentation
+docs-paths: ["docs"]
+
+# Variables for different environments
+vars:
+  # Database schemas
+  raw_schema: "raw"
+  bronze_schema: "bronze"
+  silver_schema: "silver"
+  gold_schema: "gold"
+
+  # Medical thresholds
+  critical_spo2_threshold: 90
+  critical_heart_rate_min: 60
+  critical_heart_rate_max: 100
+  fever_threshold: 38.0
+
+  # Data retention (days)
+  raw_data_retention: 90
+  processed_data_retention: 365
+
+  # Patient data privacy
+  enable_pseudonymization: true
+  pseudonym_salt: "{{ env_var('DBT_PSEUDONYM_SALT', 'default_salt') }}"

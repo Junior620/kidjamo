@@ -1,0 +1,72 @@
+# Configuration par défaut pour le simulateur massif IoT KIDJAMO
+{
+  "simulation": {
+    "patient_count": 50,
+    "duration_hours": 24,
+    "measurement_interval_seconds": 5,
+    "enable_crisis_simulation": true,
+    "crisis_test_patients": 3
+  },
+
+  "database": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "kidjamo-db",
+    "user": "postgres",
+    "password": "kidjamo@",
+    "batch_size": 1000,
+    "flush_interval_seconds": 30
+  },
+
+  "notifications": {
+    "sms": {
+      "enabled": true,
+      "provider": "twilio",
+      "account_sid": "${TWILIO_ACCOUNT_SID}",
+      "auth_token": "${TWILIO_AUTH_TOKEN}",
+      "from_number": "${TWILIO_FROM_NUMBER}",
+      "to_number": "${TWILIO_TO_NUMBER}"
+    },
+    "email": {
+      "enabled": true,
+      "smtp_server": "smtp.sendgrid.net",
+      "smtp_port": 587,
+      "username": "apikey",
+      "password": "${SENDGRID_API_KEY}",
+      "from_email": "support@kidjamo.app",
+      "to_email": "${ALERT_EMAIL}"
+    }
+  },
+
+  "monitoring": {
+    "enable_dashboard": true,
+    "dashboard_port": 8501,
+    "metrics_interval_seconds": 60,
+    "health_check_interval_seconds": 30,
+    "auto_restart_on_failure": true
+  },
+
+  "performance": {
+    "thread_pool_size": 50,
+    "memory_limit_mb": 2048,
+    "log_level": "INFO",
+    "enable_performance_metrics": true
+  },
+
+  "medical_thresholds": {
+    "spo2_critical_ss": 85,
+    "spo2_critical_general": 88,
+    "spo2_low": 90,
+    "temperature_fever": 38.0,
+    "temperature_high_fever": 39.5,
+    "heart_rate_tachycardia_adult": 120,
+    "heart_rate_tachycardia_child": 140,
+    "heart_rate_bradycardia": 50,
+    "respiratory_rate_high_adult": 24,
+    "respiratory_rate_high_child": 30,
+    "dehydration_threshold": 40,
+    "pain_severe": 7,
+    "battery_critical": 15
+  }
+}
+

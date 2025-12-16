@@ -1,0 +1,77 @@
+{
+  "start_time": "2025-08-25T12:32:52.169393",
+  "kafka_available": true,
+  "tests": [
+    {
+      "name": "API Health Check",
+      "success": true,
+      "message": "Health check passed (Kafka: True)",
+      "duration": 2.0525848865509033,
+      "timestamp": "2025-08-25T12:32:54.323555"
+    },
+    {
+      "name": "API Measurements Normal",
+      "success": true,
+      "message": "Normal measurement processed successfully (quality: 92.0%)",
+      "duration": 2.1458911895751953,
+      "timestamp": "2025-08-25T12:32:56.470451"
+    },
+    {
+      "name": "API Measurements Critical",
+      "success": true,
+      "message": "Critical measurement processed (4 alerts, 2.074s)",
+      "duration": 2.0739376544952393,
+      "timestamp": "2025-08-25T12:32:58.544925"
+    },
+    {
+      "name": "API Ingest Endpoint",
+      "success": true,
+      "message": "Ingest endpoint working (alerts: 0)",
+      "duration": 2.1708595752716064,
+      "timestamp": "2025-08-25T12:33:00.715784"
+    },
+    {
+      "name": "Kafka Message Consumption",
+      "success": true,
+      "message": "Kafka message consumed successfully (1 messages)",
+      "duration": 2.197190523147583,
+      "timestamp": "2025-08-25T12:33:02.913958"
+    },
+    {
+      "name": "Database Insertion",
+      "success": false,
+      "message": "No measurement found in database",
+      "duration": 4.2052001953125,
+      "timestamp": "2025-08-25T12:33:07.119158"
+    },
+    {
+      "name": "Critical Alerts Workflow",
+      "success": true,
+      "message": "Critical alerts workflow successful (API: 4, DB: 4)",
+      "duration": 4.1508872509002686,
+      "timestamp": "2025-08-25T12:33:11.271056"
+    },
+    {
+      "name": "API Metrics Endpoint",
+      "success": true,
+      "message": "Metrics endpoint working (uptime: 44.7s, msgs: 5, kafka: True)",
+      "duration": 2.069293260574341,
+      "timestamp": "2025-08-25T12:33:13.341352"
+    },
+    {
+      "name": "Error Handling",
+      "success": true,
+      "message": "Error handling working (rejected with HTTP 422)",
+      "duration": 2.0685200691223145,
+      "timestamp": "2025-08-25T12:33:15.411869"
+    }
+  ],
+  "summary": {
+    "total": 9,
+    "passed": 8,
+    "failed": 1,
+    "errors": 0,
+    "success_rate": 88.88888888888889,
+    "duration": "0:00:23.242476"
+  }
+}

@@ -1,0 +1,1 @@
+# Alerte latence, dérive, panne capteur

@@ -1,0 +1,40 @@
+# Profils de connexion dbt pour Kidjamo
+kidjamo:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: localhost
+      user: postgres
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: 5432
+      dbname: kidjamo-db
+      schema: dbt_dev
+      threads: 4
+      keepalives_idle: 0
+      search_path: "dbt_dev,public"
+
+    test:
+      type: postgres
+      host: localhost
+      user: postgres
+      password: "{{ env_var('POSTGRES_PASSWORD') }}"
+      port: 5432
+      dbname: kidjamo-db
+      schema: dbt_test
+      threads: 4
+      keepalives_idle: 0
+      search_path: "dbt_test,public"
+
+    prod:
+      type: postgres
+      host: "{{ env_var('PROD_DB_HOST') }}"
+      user: "{{ env_var('PROD_DB_USER') }}"
+      password: "{{ env_var('PROD_DB_PASSWORD') }}"
+      port: 5432
+      dbname: "{{ env_var('PROD_DB_NAME') }}"
+      schema: analytics
+      threads: 8
+      keepalives_idle: 0
+      search_path: "analytics,public"
+

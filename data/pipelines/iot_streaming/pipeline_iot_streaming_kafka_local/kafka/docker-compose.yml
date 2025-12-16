@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.8
+    hostname: zookeeper
+    container_name: kidjamo-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: yes
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - zookeeper-data:/bitnami/zookeeper
+
+  kafka:
+    image: bitnami/kafka:3.5
+    hostname: kafka
+    container_name: kidjamo-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9997:9997"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_CFG_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:29092,PLAINTEXT_HOST://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      ALLOW_PLAINTEXT_LISTENER: yes
+    volumes:
+      - kafka-data:/bitnami/kafka
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kidjamo-kafka-ui
+    depends_on:
+      - kafka
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kidjamo-local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      DYNAMIC_CONFIG_ENABLED: 'true'
+
+  # Service pour initialiser les topics Kafka
+  kafka-init:
+    image: bitnami/kafka:3.5
+    depends_on:
+      - kafka
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # Attendre que Kafka soit prêt
+      echo 'Waiting for Kafka to be ready...'
+      sleep 30
+      
+      # Créer les topics pour Kidjamo IoT
+      echo 'Creating Kidjamo IoT topics...'
+      
+      kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:29092 --partitions 3 --replication-factor 1 --topic kidjamo-iot-measurements
+      kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --topic kidjamo-iot-alerts
+      kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --topic kidjamo-iot-device-status
+      kafka-topics.sh --create --if-not-exists --bootstrap-server kafka:29092 --partitions 1 --replication-factor 1 --topic kidjamo-iot-errors
+      
+      echo 'Topics created successfully!'
+      kafka-topics.sh --bootstrap-server kafka:29092 --list
+      "
+
+volumes:
+  zookeeper-data:
+  kafka-data:

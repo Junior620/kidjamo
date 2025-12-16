@@ -1,0 +1,25 @@
+# Test manuel d'envoi de données IoT
+# Utilisez ce JSON dans Postman ou curl
+
+POST http://localhost:5000/api/iot/data
+Content-Type: application/json
+
+{
+  "patient_id": "123e4567-e89b-12d3-a456-426614174000",
+  "device_id": "device_bracelet_001",
+  "timestamp": "2025-08-19T09:30:00.000Z",
+  "measurements": {
+    "heart_rate": 95,
+    "respiratory_rate": 20,
+    "spo2": 94.5,
+    "body_temperature": 37.8,
+    "ambient_temperature": 28.0,
+    "hydration_level": 75.2,
+    "activity_level": 4,
+    "heat_index": 32.1
+  },
+  "location": {
+    "latitude": 14.6928,
+    "longitude": -17.4467
+  }
+}

@@ -1,0 +1,25 @@
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    hostname: zookeeper
+    container_name: kidjamo-zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: wurstmeister/kafka:latest
+    hostname: kafka
+    container_name: kidjamo-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: localhost
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_CREATE_TOPICS: "kidjamo-iot-measurements:3:1,kidjamo-iot-alerts:1:1,kidjamo-iot-device-status:1:1,kidjamo-iot-errors:1:1"
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

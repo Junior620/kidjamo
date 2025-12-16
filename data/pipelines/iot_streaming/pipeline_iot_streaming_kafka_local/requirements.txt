@@ -1,0 +1,40 @@
+# Requirements pour pipeline IoT streaming Kafka local
+# Installation: pip install -r requirements.txt
+
+# API FastAPI
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+
+# Kafka
+kafka-python==2.0.2
+confluent-kafka==2.3.0
+
+# PySpark
+pyspark==4.0.0
+py4j==0.10.9.7
+
+# Data processing
+pandas==2.1.3
+numpy==1.24.3
+pyarrow==14.0.1
+
+# Monitoring et logging
+prometheus-client==0.19.0
+structlog==23.2.0
+
+# Utilitaires
+requests==2.31.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+schedule==1.2.0
+
+# Tests
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.2
+
+# Development
+jupyter==1.0.0
+matplotlib==3.8.2
+seaborn==0.13.0
