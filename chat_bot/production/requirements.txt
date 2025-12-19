@@ -1,0 +1,26 @@
+"""
+Requirements pour le chatbot Kidjamo Production
+Installation : pip install -r requirements.txt
+"""
+
+# Framework web
+Flask==2.3.3
+flask-cors==4.0.0
+
+# Base de données PostgreSQL
+psycopg2-binary==2.9.7
+
+# AWS SDK
+boto3==1.28.57
+botocore==1.31.57
+
+# Utilitaires
+python-dotenv==1.0.0
+requests==2.31.0
+
+# Production et monitoring
+gunicorn==21.2.0
+gevent==23.7.0
+
+# Sécurité
+Werkzeug==2.3.7

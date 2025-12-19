@@ -1,0 +1,10 @@
+# Dépendances pipeline d'ingestion drépanocytose
+# Mis à jour automatiquement le 2025-08-17T18:31:37.581425
+
+cryptography>=3.4.8
+great-expectations>=0.15.0
+numpy>=1.21.0
+pandas>=1.5.0
+pyspark==3.5.1
+python-dotenv>=1.0.0
+pyyaml==6.0.1

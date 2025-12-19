@@ -1,0 +1,201 @@
+{
+  "contextual_tests": {
+    "total_scenarios": 2,
+    "passed": 1,
+    "failed": 1,
+    "details": [
+      {
+        "scenario_name": "Escalade de crise avec contexte",
+        "passed": true,
+        "steps": [
+          {
+            "step": 1,
+            "message": "Bonjour",
+            "expected_type": "greeting",
+            "actual_type": "greeting",
+            "passed": true
+          },
+          {
+            "step": 2,
+            "message": "J'ai mal au dos",
+            "expected_type": "pain_management",
+            "actual_type": "pain_management",
+            "passed": true
+          },
+          {
+            "step": 3,
+            "message": "La douleur est à 8/10",
+            "expected_type": "emergency",
+            "actual_type": "emergency",
+            "passed": true
+          },
+          {
+            "step": 4,
+            "message": "Que dois-je faire ?",
+            "expected_type": "emergency",
+            "actual_type": "emergency",
+            "passed": true
+          },
+          {
+            "step": 5,
+            "message": "Merci",
+            "expected_type": "gratitude",
+            "actual_type": "gratitude",
+            "passed": true
+          }
+        ]
+      },
+      {
+        "scenario_name": "Suivi de médication contextuel",
+        "passed": false,
+        "steps": [
+          {
+            "step": 1,
+            "message": "J'ai oublié mon médicament",
+            "expected_type": "medication",
+            "actual_type": "medication",
+            "passed": true
+          },
+          {
+            "step": 2,
+            "message": "C'était ce matin",
+            "expected_type": "medication",
+            "actual_type": "general",
+            "passed": false
+          },
+          {
+            "step": 3,
+            "message": "Que faire ?",
+            "expected_type": "medication",
+            "actual_type": "medication",
+            "passed": true
+          }
+        ]
+      }
+    ]
+  },
+  "session_management_tests": {
+    "history_retrieval": true,
+    "context_reset": true,
+    "overall_passed": true
+  },
+  "emergency_detection_tests": {
+    "total_tests": 7,
+    "passed": 7,
+    "success_rate": 100.0,
+    "details": [
+      {
+        "message": "Aide moi",
+        "expected_emergency": true,
+        "detected_as_emergency": true,
+        "passed": true
+      },
+      {
+        "message": "La douleur est à 9/10",
+        "expected_emergency": true,
+        "detected_as_emergency": true,
+        "passed": true
+      },
+      {
+        "message": "Je n'arrive plus à respirer",
+        "expected_emergency": true,
+        "detected_as_emergency": true,
+        "passed": true
+      },
+      {
+        "message": "Ça ne passe pas avec les médicaments",
+        "expected_emergency": true,
+        "detected_as_emergency": true,
+        "passed": true
+      },
+      {
+        "message": "Dois-je aller aux urgences ?",
+        "expected_emergency": true,
+        "detected_as_emergency": true,
+        "passed": true
+      },
+      {
+        "message": "Bonjour comment allez-vous",
+        "expected_emergency": false,
+        "detected_as_emergency": false,
+        "passed": true
+      },
+      {
+        "message": "Qu'est-ce que la drépanocytose",
+        "expected_emergency": false,
+        "detected_as_emergency": false,
+        "passed": true
+      }
+    ]
+  },
+  "performance_tests": {
+    "concurrent_requests": 10,
+    "successful_responses": 10,
+    "success_rate": 100.0,
+    "avg_response_time": 2.0480758428573607,
+    "max_response_time": 2.055286169052124,
+    "min_response_time": 2.0377635955810547
+  },
+  "edge_case_tests": {
+    "total_cases": 6,
+    "passed": 6,
+    "details": [
+      {
+        "case": "",
+        "expected_success": false,
+        "passed": true
+      },
+      {
+        "case": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...",
+        "expected_success": true,
+        "passed": true
+      },
+      {
+        "case": "🚨💊😣🏥",
+        "expected_success": true,
+        "passed": true
+      },
+      {
+        "case": "MESSAGE EN MAJUSCULES",
+        "expected_success": true,
+        "passed": true
+      },
+      {
+        "case": "   espaces   multiples   ",
+        "expected_success": true,
+        "passed": true
+      },
+      {
+        "case": "123456789",
+        "expected_success": true,
+        "passed": true
+      }
+    ]
+  },
+  "user_experience_tests": {
+    "total_tests": 3,
+    "passed": 3,
+    "details": [
+      {
+        "test_name": "Réponse à une salutation contient-elle les fonctionnalités ?",
+        "passed": true
+      },
+      {
+        "test_name": "Réponse d'urgence contient-elle les numéros ?",
+        "passed": true
+      },
+      {
+        "test_name": "Réponse formatée en HTML ?",
+        "passed": true
+      }
+    ]
+  },
+  "summary": {
+    "total_tests": 13,
+    "total_passed": 17,
+    "total_failed": -4,
+    "success_rate": 130.77,
+    "test_timestamp": "2025-09-11T14:18:42.529466",
+    "overall_status": "PASSED"
+  }
+}

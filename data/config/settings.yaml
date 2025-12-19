@@ -1,0 +1,75 @@
+# Configuration principale du système KidJamo
+# Fichier de configuration YAML pour tous les services
+
+# === DATABASE CONFIGURATION ===
+database:
+  host: localhost
+  port: 5432
+  name: kidjamo-db
+  user: postgres
+  password: YOUR_DB_PASSWORD
+  connection_pool_size: 10
+  connection_timeout: 30
+
+# === NOTIFICATION SERVICES ===
+notifications:
+  sms:
+    provider: twilio
+    account_sid: YOUR_TWILIO_ACCOUNT_SID
+    auth_token: YOUR_TWILIO_AUTH_TOKEN
+    phone_number: YOUR_TWILIO_PHONE_NUMBER
+    messaging_service_sid: YOUR_TWILIO_MESSAGING_SERVICE_SID
+    enabled: true
+
+  email:
+    provider: sendgrid
+    api_key: YOUR_SENDGRID_API_KEY
+    from_email: support@kidjamo.app
+    from_name: KidJamo-team
+    enabled: true
+
+# === MEDICAL MONITORING ===
+medical:
+  alert_thresholds:
+    heart_rate:
+      min: 60
+      max: 100
+      critical_min: 40
+      critical_max: 150
+    oxygen_saturation:
+      min: 95
+      critical_min: 90
+    temperature:
+      min: 36.0
+      max: 37.5
+      critical_max: 39.0
+
+  alert_settings:
+    cooldown_seconds: 120
+    max_alerts_per_hour: 10
+    enable_critical_immediate: true
+
+# === SECURITY ===
+security:
+  encryption:
+    key_rotation_hours: 24
+    enable_at_rest: true
+
+  audit:
+    log_retention_days: 90
+    enable_pii_masking: true
+
+# === PIPELINE CONFIGURATION ===
+pipeline:
+  batch_size: 5000
+  max_latency_ms: 5000
+  target_throughput: 100
+  enable_compression: true
+  compression_codec: snappy
+
+# === MONITORING ===
+monitoring:
+  metrics_interval_minutes: 5
+  log_level: INFO
+  alert_webhook: http://localhost:8080/alerts
+  enabled: true

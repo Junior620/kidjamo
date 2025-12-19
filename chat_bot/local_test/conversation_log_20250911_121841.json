@@ -1,0 +1,49 @@
+{
+  "session_id": "simulation_20250911_121554",
+  "timestamp": "2025-09-11T12:18:41.794511",
+  "total_messages": 6,
+  "conversation": [
+    {
+      "timestamp": "2025-09-11T12:15:56.894301",
+      "user_message": "Salut",
+      "bot_response": "Bonjour ! Je suis votre assistant santé Kidjamo Je suis spécialisé dans l'accompagnement des patients atteints de drépanocytose. Je peux vous aider avec : 🩺 Gestion de la douleur - Évaluation et conseils personnalisés 💊 Suivi des médicaments - Rappels et interactions 📊 Données vitales - Analyse de vos mesures IoT 🚨 Urgences médicales - Protocoles et contacts d'urgence 📚 Éducation thérapeutique - Informations sur votre maladie Comment puis-je vous aider aujourd'hui ?",
+      "conversation_type": "greeting",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:16:00.947462",
+      "user_message": "Je viens d'apprendre que j'ai la drépanocytose",
+      "bot_response": "Informations médicales Je peux vous renseigner sur de nombreux aspects de la drépanocytose : Définition et mécanisme - qu'est-ce que la drépanocytose ? Symptômes et manifestations - signes à surveiller Transmission génétique - hérédité et conseil génétique Traitements disponibles - options thérapeutiques Prévention des crises - conseils au quotidien Complications - surveillance et prise en charge Quelle information spécifique vous intéresse ?",
+      "conversation_type": "medical_info",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:16:04.993974",
+      "user_message": "Qu'est-ce que c'est exactement ?",
+      "bot_response": "Besoin d'aide ? Je suis spécialisé dans l'accompagnement des patients drépanocytaires. Voici quelques exemples de ce que vous pouvez me demander : Exemples de questions \"J'ai mal au dos, que faire ?\" \"Quand prendre mon hydroxyurée ?\" \"Qu'est-ce qui déclenche les crises ?\" \"Comment fonctionne le bracelet ?\" \"Que faire en cas d'urgence ?\" N'hésitez pas à me poser vos questions !",
+      "conversation_type": "general",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:16:09.050739",
+      "user_message": "Est-ce que c'est grave ?",
+      "bot_response": "Besoin d'aide ? Je suis spécialisé dans l'accompagnement des patients drépanocytaires. Voici quelques exemples de ce que vous pouvez me demander : Exemples de questions \"J'ai mal au dos, que faire ?\" \"Quand prendre mon hydroxyurée ?\" \"Qu'est-ce qui déclenche les crises ?\" \"Comment fonctionne le bracelet ?\" \"Que faire en cas d'urgence ?\" N'hésitez pas à me poser vos questions !",
+      "conversation_type": "general",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:16:13.104119",
+      "user_message": "Quels traitements existent ?",
+      "bot_response": "Je suis là pour vous aider Je ne suis pas sûr de bien comprendre votre question. Voici les domaines dans lesquels je peux vous accompagner : 💭 Questions sur la drépanocytose - \"Qu'est-ce que la drépanocytose ?\" 🤕 Gestion de la douleur - \"J'ai mal\" ou \"Comment gérer une crise ?\" 💊 Médicaments - \"Rappel traitement\" ou \"Effets secondaires\" 🚨 Urgences - \"Aide urgent\" ou \"Douleur intense\" 📱 Application - \"Comment utiliser Kidjamo ?\" Reformulez votre question ou choisissez un de ces sujets !",
+      "conversation_type": "general",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:16:17.169821",
+      "user_message": "Comment je peux éviter les crises ?",
+      "bot_response": "Je suis là pour vous aider Je ne suis pas sûr de bien comprendre votre question. Voici les domaines dans lesquels je peux vous accompagner : 💭 Questions sur la drépanocytose - \"Qu'est-ce que la drépanocytose ?\" 🤕 Gestion de la douleur - \"J'ai mal\" ou \"Comment gérer une crise ?\" 💊 Médicaments - \"Rappel traitement\" ou \"Effets secondaires\" 🚨 Urgences - \"Aide urgent\" ou \"Douleur intense\" 📱 Application - \"Comment utiliser Kidjamo ?\" Reformulez votre question ou choisissez un de ces sujets !",
+      "conversation_type": "general",
+      "success": true
+    }
+  ]
+}

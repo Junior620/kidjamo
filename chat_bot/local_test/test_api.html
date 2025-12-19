@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test API Chatbot</title>
+</head>
+<body>
+    <h1>Test API Chatbot Kidjamo</h1>
+    <input type="text" id="messageInput" placeholder="Tapez votre message..." value="bonjour">
+    <button onclick="testAPI()">Tester</button>
+    <div id="result"></div>
+
+    <script>
+        async function testAPI() {
+            const message = document.getElementById('messageInput').value;
+            const resultDiv = document.getElementById('result');
+
+            resultDiv.innerHTML = '<p>Envoi en cours...</p>';
+
+            try {
+                console.log('Envoi du message:', message);
+
+                const response = await fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: 'test-session',
+                        is_voice: false
+                    })
+                });
+
+                console.log('Réponse reçue, status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Données reçues:', data);
+
+                resultDiv.innerHTML = `
+                    <h3>Réponse du serveur:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                    <h3>Message formaté:</h3>
+                    <div>${data.response}</div>
+                `;
+
+            } catch (error) {
+                console.error('Erreur:', error);
+                resultDiv.innerHTML = `<p style="color: red;">Erreur: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

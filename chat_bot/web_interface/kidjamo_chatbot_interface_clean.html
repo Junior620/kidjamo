@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidjamo Health Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #34d399;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f97316;
+            --info-color: #3b82f6;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #94a3b8;
+            --border-color: #d1d5db;
+            --radius-sm: 0.125rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            margin: 0;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        .chat-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 95vh;
+            border: 1px solid var(--border-color);
+        }
+
+        /* === HEADER === */
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bot-avatar {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--success-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .header-info h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.75rem;
+            height: 2.75rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .emergency-button {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-md);
+            font-size: 0.875rem;
+        }
+
+        .emergency-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* === MESSAGES === */
+        .chat-messages {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background: var(--bg-secondary);
+            background-image: radial-gradient(circle at 1px 1px, rgba(37, 99, 235, 0.05) 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+
+        .message {
+            display: flex;
+            margin-bottom: 2rem;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            margin: 0 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .message.user .message-avatar {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--success-color) 100%);
+            color: white;
+        }
+
+        .message-content {
+            max-width: 75%;
+            position: relative;
+        }
+
+        .message-bubble {
+            padding: 1.25rem 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        .message.bot .message-time {
+            text-align: left;
+        }
+
+        /* === TYPING INDICATOR === */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            border-bottom-left-radius: var(--radius-sm);
+            max-width: 75%;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--text-light);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* === INPUT CONTAINER === */
+        .chat-input-container {
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            flex: 1;
+            min-height: 3.5rem;
+            max-height: 8rem;
+            padding: 1rem 1.25rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            transition: all 0.2s ease;
+            background: var(--bg-secondary);
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: var(--bg-primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-light);
+        }
+
+        /* === VOICE BUTTON === */
+        .voice-button {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--success-color) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.5rem;
+            height: 3.5rem;
+            position: relative;
+            font-size: 1.125rem;
+        }
+
+        .voice-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .voice-button.recording {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            animation: pulse-recording 1s infinite;
+        }
+
+        @keyframes pulse-recording {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .voice-status {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .voice-status.show {
+            opacity: 1;
+        }
+
+        /* === SEND BUTTON === */
+        .send-button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 3.5rem;
+            height: 3.5rem;
+            font-size: 1.125rem;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .send-button:disabled, .voice-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* === QUICK ACTIONS === */
+        .quick-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        /* === WELCOME MESSAGE === */
+        .welcome-message {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.125rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1.125rem;
+        }
+
+        .feature-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* === RESPONSE SECTIONS === */
+        .response-section {
+            margin-bottom: 1.5rem;
+            background: rgba(37, 99, 235, 0.02);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .response-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .response-section h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid rgba(37, 99, 235, 0.1);
+        }
+
+        .response-section h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .response-section h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .response-section p {
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .response-section ul {
+            padding-left: 0;
+            list-style: none;
+            margin-bottom: 1rem;
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .response-section li {
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(37, 99, 235, 0.04) 100%);
+            border-radius: var(--radius-md);
+            line-height: 1.6;
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .response-section li:hover {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.12) 0%, rgba(37, 99, 235, 0.06) 100%);
+            transform: translateX(4px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-section li strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Styles spécialisés pour différents types de listes */
+        .help-list li {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+            border-left-color: var(--success-color);
+        }
+
+        .help-list li:hover {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+        }
+
+        .info-list li {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
+            border-left-color: var(--info-color);
+        }
+
+        .info-list li:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%);
+        }
+
+        .urgent-list li {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+            color: var(--danger-color);
+            font-weight: 500;
+            border-left-color: var(--danger-color);
+            border-left-width: 4px;
+        }
+
+        .urgent-list li:hover {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.08) 100%);
+        }
+
+        .urgent-list li strong {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* Style pour les alertes d'urgence */
+        .emergency-alert {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .emergency-alert::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--danger-color) 0%, #dc2626 100%);
+        }
+
+        .emergency-alert h3,
+        .emergency-alert h4 {
+            color: var(--danger-color);
+        }
+
+        .emergency-alert h3 {
+            font-size: 1.375rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Style pour les sections d'information médicale */
+        .medical-info {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+            border-left-color: var(--success-color);
+            border-left-width: 4px;
+        }
+
+        .medical-info h3 {
+            color: var(--success-color);
+        }
+
+        /* Style pour les sections de médicaments */
+        .medication-section {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border-left-color: var(--info-color);
+        }
+
+        .medication-section h3 {
+            color: var(--info-color);
+        }
+
+        /* Style pour les conseils de douleur */
+        .pain-management {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(234, 88, 12, 0.05) 100%);
+            border-left-color: var(--warning-color);
+        }
+
+        .pain-management h3 {
+            color: var(--warning-color);
+        }
+
+        /* Améliorations des codes et numéros importants */
+        .response-section code {
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.875rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Style pour les numéros d'urgence */
+        .emergency-number {
+            display: inline-block;
+            background: var(--danger-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1rem;
+            margin-right: 0.5rem;
+        }
+
+        /* Icônes contextuelles */
+        .response-section .context-icon {
+            font-size: 1.25rem;
+            margin-right: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* Animations pour les éléments interactifs */
+        .response-section li,
+        .response-section {
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Style pour les citations ou témoignages */
+        .response-section blockquote {
+            border-left: 4px solid var(--primary-color);
+            margin: 1rem 0;
+            padding: 1rem 1.5rem;
+            background: rgba(37, 99, 235, 0.05);
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Style pour les tableaux dans les réponses */
+        .response-section table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: var(--bg-primary);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-section th,
+        .response-section td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .response-section th {
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .response-section tr:hover {
+            background: rgba(37, 99, 235, 0.02);
+        }
+
+        /* Style pour les badges de statut */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .status-badge.warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .status-badge.danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .status-badge.info {
+            background: var(--info-color);
+            color: white;
+        }
+
+        /* === BOUTONS DE QUESTIONS CLIQUABLES === */
+        .suggested-questions {
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .suggested-questions h5 {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .question-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .question-btn {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            min-height: 40px;
+            text-align: left;
+            line-height: 1.3;
+        }
+
+        .question-btn:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .question-btn:active {
+            transform: translateY(0);
+        }
+
+        .question-btn .icon {
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        .question-btn:hover .icon {
+            opacity: 1;
+        }
+
+        /* Styles spécialisés par catégorie */
+        .question-btn.pain {
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .question-btn.pain:hover {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            border-color: var(--danger-color);
+        }
+
+        .question-btn.medication {
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .question-btn.medication:hover {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            border-color: var(--success-color);
+        }
+
+        .question-btn.medical {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .question-btn.medical:hover {
+            background: linear-gradient(135deg, var(--info-color) 0%, #2563eb 100%);
+            border-color: var(--info-color);
+        }
+
+        .question-btn.general {
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        .question-btn.general:hover {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #ea580c 100%);
+            border-color: var(--warning-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="bot-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="header-info">
+                    <h1>Kidjamo Health Assistant</h1>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>En ligne • Assistant médical Local</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="clearChat()" title="Nouvelle conversation">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="header-btn" onclick="toggleSettings()" title="Paramètres">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="emergency-button" onclick="handleEmergency()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Urgence
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message fade-in">
+                <div class="welcome-title">
+                    <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+                    Bienvenue sur Kidjamo Health Assistant
+                </div>
+                <p class="welcome-subtitle">Votre assistant santé intelligent spécialisé dans la drépanocytose. Je suis là pour vous aider 24h/7j avec des conseils personnalisés et un suivi médical.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="sendQuickMessage('J\'ai mal')">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-circle" style="color: var(--warning-color);"></i>
+                        </div>
+                        <div class="feature-title">Signaler une douleur</div>
+                        <div class="feature-description">Décrivez votre douleur pour recevoir des conseils personnalisés et une évaluation rapide</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Mes données vitales')">
+                        <div class="feature-icon">
+                            <i class="fas fa-heartbeat" style="color: var(--danger-color);"></i>
+                        </div>
+                        <div class="feature-title">Données vitales</div>
+                        <div class="feature-description">Consultez et analysez vos mesures du bracelet IoT connecté</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Mes médicaments')">
+                        <div class="feature-icon">
+                            <i class="fas fa-pills" style="color: var(--primary-color);"></i>
+                        </div>
+                        <div class="feature-title">Médicaments</div>
+                        <div class="feature-description">Gestion intelligente et rappels automatiques de vos traitements</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Qu\'est-ce que la drépanocytose ?')">
+                        <div class="feature-icon">
+                            <i class="fas fa-question-circle" style="color: var(--info-color);"></i>
+                        </div>
+                        <div class="feature-title">Informations médicales</div>
+                        <div class="feature-description">Posez vos questions sur la drépanocytose et obtenez des réponses fiables</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <textarea
+                    id="messageInput"
+                    class="input-field"
+                    placeholder="Écrivez votre message ou utilisez le microphone... (Entrée pour envoyer)"
+                    rows="1"
+                    onkeypress="handleKeyPress(event)"
+                ></textarea>
+                <button class="voice-button" id="voiceButton" onclick="toggleVoiceRecording()" title="Enregistrement vocal">
+                    <i class="fas fa-microphone" id="voiceIcon"></i>
+                    <div class="voice-status" id="voiceStatus">En écoute...</div>
+                </button>
+                <button id="sendButton" class="send-button" onclick="sendMessage()" title="Envoyer le message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-action" onclick="sendQuickMessage('Bonjour')">
+                    <i class="fas fa-hand-wave"></i>
+                    Saluer
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Comment ça marche ?')">
+                    <i class="fas fa-question"></i>
+                    Aide
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Qu\'est-ce que la drépanocytose ?')">
+                    <i class="fas fa-info"></i>
+                    Info médicale
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Qui es-tu ?')">
+                    <i class="fas fa-robot"></i>
+                    Présentation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let sessionId = generateSessionId();
+        let isTyping = false;
+        let isRecording = false;
+        let recognition = null;
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Kidjamo Health Assistant initialisé');
+            setupEventListeners();
+            initSpeechRecognition();
+            focusInput();
+        });
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            messageInput.addEventListener('input', function() {
+                // Auto-resize du textarea
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+
+                // Activer/désactiver le bouton d'envoi
+                sendButton.disabled = !this.value.trim();
+            });
+
+            sendButton.disabled = true;
+        }
+
+        // Génération d'ID de session unique
+        function generateSessionId() {
+            return 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Obtenir l'heure actuelle formatée
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // === RECONNAISSANCE VOCALE ===
+        function initSpeechRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+
+                recognition.continuous = false;
+                recognition.interimResults = true; // Changé pour voir les résultats intermédiaires
+                recognition.lang = 'fr-FR';
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = function() {
+                    console.log('🎤 Reconnaissance vocale démarrée');
+                    showVoiceStatus('🎤 Parlez maintenant...');
+                    addMessage('🎤 Microphone activé. Parlez maintenant...', 'bot', true);
+                };
+
+                recognition.onresult = function(event) {
+                    console.log('🎤 Résultat reçu:', event.results);
+
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+
+                    console.log('🎤 Texte reconnu:', transcript);
+
+                    // Mettre à jour l'input en temps réel
+                    document.getElementById('messageInput').value = transcript;
+
+                    // Si c'est un résultat final, envoyer le message
+                    if (event.results[event.results.length - 1].isFinal) {
+                        hideVoiceStatus();
+                        if (transcript.trim()) {
+                            addMessage('✅ Texte reconnu: "' + transcript + '"', 'bot', true);
+                            sendMessage();
+                        } else {
+                            addMessage('❌ Aucun texte reconnu. Réessayez.', 'bot', true);
+                        }
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('❌ Erreur reconnaissance vocale:', event.error);
+                    hideVoiceStatus();
+                    stopRecording();
+
+                    let errorMessage = 'Erreur de reconnaissance vocale';
+                    switch(event.error) {
+                        case 'no-speech':
+                            errorMessage = '🔇 Aucune parole détectée. Parlez plus fort et réessayez.';
+                            break;
+                        case 'audio-capture':
+                            errorMessage = '🎤 Microphone non accessible. Vérifiez les permissions dans votre navigateur.';
+                            break;
+                        case 'not-allowed':
+                            errorMessage = '🚫 Permission microphone refusée. Cliquez sur l\'icône 🔒 dans la barre d\'adresse pour autoriser.';
+                            break;
+                        case 'network':
+                            errorMessage = '🌐 Erreur réseau. Vérifiez votre connexion internet.';
+                            break;
+                        case 'aborted':
+                            errorMessage = '⏹️ Enregistrement interrompu.';
+                            break;
+                        default:
+                            errorMessage = `❌ Erreur: ${event.error}`;
+                    }
+
+                    addMessage(errorMessage, 'bot', true);
+                };
+
+                recognition.onend = function() {
+                    console.log('🎤 Reconnaissance vocale terminée');
+                    stopRecording();
+                    hideVoiceStatus();
+                };
+
+                console.log('✅ Reconnaissance vocale initialisée');
+                return true;
+            } else {
+                console.warn('⚠️ Reconnaissance vocale non supportée par ce navigateur');
+                return false;
+            }
+        }
+
+        // Basculer l'enregistrement vocal
+        function toggleVoiceRecording() {
+            console.log('🎤 Toggle voice recording clicked - isRecording:', isRecording);
+
+            if (!recognition && !initSpeechRecognition()) {
+                addMessage('🎤 Désolé, la reconnaissance vocale n\'est pas supportée par votre navigateur. Utilisez Chrome, Firefox ou Edge récents.', 'bot', true);
+                return;
+            }
+
+            if (isRecording) {
+                stopRecording();
+            } else {
+                // Demander les permissions avant de commencer
+                requestMicrophonePermission().then(startRecording).catch(error => {
+                    console.error('Permission refusée:', error);
+                    addMessage('🚫 Permission microphone requise. Cliquez sur "Autoriser" quand le navigateur le demande.', 'bot', true);
+                });
+            }
+        }
+
+        // Demander la permission du microphone
+        function requestMicrophonePermission() {
+            return navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(stream => {
+                    // Arrêter le stream immédiatement, on voulait juste la permission
+                    stream.getTracks().forEach(track => track.stop());
+                    console.log('✅ Permission microphone accordée');
+                    return true;
+                })
+                .catch(error => {
+                    console.error('❌ Permission microphone refusée:', error);
+                    throw error;
+                });
+        }
+
+        // Démarrer l'enregistrement
+        function startRecording() {
+            if (!recognition) return;
+
+            console.log('🎤 Tentative de démarrage enregistrement...');
+
+            try {
+                isRecording = true;
+                recognition.start();
+
+                const voiceButton = document.getElementById('voiceButton');
+                const voiceIcon = document.getElementById('voiceIcon');
+
+                voiceButton.classList.add('recording');
+                voiceIcon.className = 'fas fa-stop';
+                voiceButton.title = 'Arrêter l\'enregistrement';
+
+                console.log('🎤 Enregistrement démarré avec succès');
+            } catch (error) {
+                console.error('❌ Erreur démarrage enregistrement:', error);
+                isRecording = false;
+                stopRecording();
+
+                if (error.name === 'InvalidStateError') {
+                    addMessage('🎤 Reconnaissance vocale déjà en cours. Attendez qu\'elle se termine.', 'bot', true);
+                } else {
+                    addMessage('🎤 Erreur lors du démarrage de l\'enregistrement: ' + error.message, 'bot', true);
+                }
+            }
+        }
+
+        // Arrêter l'enregistrement
+        function stopRecording() {
+            if (!recognition) return;
+
+            try {
+                isRecording = false;
+                recognition.stop();
+
+                const voiceButton = document.getElementById('voiceButton');
+                const voiceIcon = document.getElementById('voiceIcon');
+
+                voiceButton.classList.remove('recording');
+                voiceIcon.className = 'fas fa-microphone';
+                voiceButton.title = 'Enregistrement vocal';
+
+                console.log('🎤 Enregistrement arrêté');
+            } catch (error) {
+                console.error('❌ Erreur arrêt enregistrement:', error);
+            }
+        }
+
+        // Afficher le statut vocal
+        function showVoiceStatus(message) {
+            const status = document.getElementById('voiceStatus');
+            if (status) {
+                status.textContent = message;
+                status.classList.add('show');
+            }
+        }
+
+        // Masquer le statut vocal
+        function hideVoiceStatus() {
+            const status = document.getElementById('voiceStatus');
+            if (status) {
+                status.classList.remove('show');
+            }
+        }
+
+        // === SYNTHÈSE VOCALE AVANCÉE ===
+        function cleanHTMLForSpeech(htmlContent) {
+            // Créer un élément temporaire pour parser le HTML
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlContent;
+
+            // Extraire seulement le texte pertinent pour la lecture
+            let speechText = '';
+
+            // Récupérer les titres principaux
+            const mainTitles = tempDiv.querySelectorAll('h3, h4');
+            mainTitles.forEach(title => {
+                const titleText = title.textContent.trim();
+                if (titleText && !titleText.includes('fas fa-')) {
+                    speechText += titleText + '. ';
+                }
+            });
+
+            // Récupérer les points importants des listes
+            const listItems = tempDiv.querySelectorAll('li');
+            let importantPoints = [];
+
+            listItems.forEach(item => {
+                const itemText = item.textContent.trim();
+                if (itemText && !itemText.includes('fas fa-')) {
+                    // Extraire seulement la partie principale (avant le tiret)
+                    const mainPart = itemText.split(' - ')[0];
+                    if (mainPart.length > 5 && importantPoints.length < 3) {
+                        importantPoints.push(mainPart);
+                    }
+                }
+            });
+
+            if (importantPoints.length > 0) {
+                speechText += 'Voici les points essentiels : ' + importantPoints.join(', ') + '.';
+            }
+
+            // Récupérer les paragraphes simples
+            const paragraphs = tempDiv.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                const pText = p.textContent.trim();
+                if (pText && pText.length < 200 && !pText.includes('fas fa-')) {
+                    speechText += ' ' + pText;
+                }
+            });
+
+            // Nettoyer le texte final
+            speechText = speechText
+                .replace(/\s+/g, ' ')
+                .replace(/[•◦▪▫🤖😊🩺💊📊📚🎯💡⚠️🔔📋🚨🏥🔧]/g, '')
+                .replace(/\*\*/g, '')
+                .replace(/<[^>]*>/g, '')
+                .replace(/SAMU/g, 'Samu')
+                .replace(/CHU/g, 'C H U')
+                .trim();
+
+            // Limiter la longueur pour une lecture fluide
+            if (speechText.length > 300) {
+                speechText = speechText.substring(0, 300) + '...';
+            }
+
+            return speechText || 'Réponse reçue.';
+        }
+
+        function speakResponse(text, isHTML = false) {
+            if ('speechSynthesis' in window) {
+                // Nettoyer le texte si c'est du HTML
+                const textToSpeak = isHTML ? cleanHTMLForSpeech(text) : text;
+
+                if (!textToSpeak || textToSpeak.trim().length === 0) {
+                    console.log('🔇 Pas de texte à lire');
+                    return;
+                }
+
+                console.log('🔊 Lecture vocale:', textToSpeak.substring(0, 50) + '...');
+
+                const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                utterance.volume = 0.8;
+
+                // Utiliser une voix française si disponible
+                const voices = speechSynthesis.getVoices();
+                const frenchVoice = voices.find(voice => voice.lang.startsWith('fr'));
+                if (frenchVoice) {
+                    utterance.voice = frenchVoice;
+                }
+
+                utterance.onstart = function() {
+                    console.log('🔊 Début de la lecture vocale');
+                };
+
+                utterance.onend = function() {
+                    console.log('🔇 Fin de la lecture vocale');
+                };
+
+                utterance.onerror = function(event) {
+                    console.error('❌ Erreur synthèse vocale:', event.error);
+                };
+
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // === GESTION DES MESSAGES ===
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = input.value.trim();
+
+            if (!message || isTyping) return;
+
+            // Désactiver l'interface temporairement
+            input.disabled = true;
+            sendButton.disabled = true;
+
+            // Afficher le message utilisateur
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Afficher l'indicateur de frappe
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        is_voice: false
+                    })
+                });
+
+                const data = await response.json();
+                hideTypingIndicator();
+
+                if (data.success) {
+                    // Passer le message utilisateur pour la détection de contexte
+                    addMessage(data.response, 'bot', true, message);
+
+                    // Synthèse vocale pour les urgences et douleurs
+                    if (data.conversation_type === 'emergency' || data.conversation_type === 'pain_management') {
+                        speakResponse(data.response, true);
+                    }
+                } else {
+                    addMessage('Désolé, une erreur est survenue. Veuillez réessayer.', 'bot', true, message);
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur envoi message:', error);
+                hideTypingIndicator();
+                addMessage('Erreur de connexion. Vérifiez que le serveur local est démarré sur le port 5000.', 'bot', true, message);
+            }
+
+            // Réactiver l'interface
+            input.disabled = false;
+            sendButton.disabled = !input.value.trim();
+            focusInput();
+        }
+
+        // Envoyer un message prédéfini
+        function sendQuickMessage(message) {
+            removePreviousSuggestions();
+            const input = document.getElementById('messageInput');
+            input.value = message;
+            sendMessage();
+        }
+
+        // Gestion des touches clavier
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        // Faire défiler vers le bas
+        function scrollToBottom() {
+            try {
+                const el = document.getElementById('chatMessages');
+                if (!el) return;
+
+                setTimeout(() => {
+                    if (typeof el.scrollTo === 'function') {
+                        el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+                    } else {
+                        el.scrollTop = el.scrollHeight;
+                    }
+                }, 100);
+            } catch (error) {
+                console.error('❌ Erreur scroll:', error);
+            }
+        }
+
+        // Échapper le HTML pour éviter l'injection
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Mettre le focus sur l'input
+        function focusInput() {
+            try {
+                setTimeout(() => {
+                    const input = document.getElementById('messageInput');
+                    if (input && !input.disabled) {
+                        input.focus();
+                    }
+                }, 100);
+            } catch (error) {
+                console.error('❌ Erreur focus:', error);
+            }
+        }
+
+        // === SYSTÈME DE QUESTIONS CLIQUABLES DYNAMIQUES ===
+
+        // Base de données des questions contextuelles
+        const contextualQuestions = {
+            pain: [
+                { text: "Où avez-vous mal exactement ?", icon: "fas fa-map-marker-alt", category: "pain" },
+                { text: "Sur une échelle de 1 à 10, quelle est l'intensité ?", icon: "fas fa-thermometer-half", category: "pain" },
+                { text: "Depuis quand cette douleur a-t-elle commencé ?", icon: "fas fa-clock", category: "pain" },
+                { text: "Avez-vous pris des médicaments ?", icon: "fas fa-pills", category: "medication" },
+                { text: "La douleur s'aggrave-t-elle ?", icon: "fas fa-chart-line", category: "pain" }
+            ],
+            medication: [
+                { text: "Quels médicaments prenez-vous actuellement ?", icon: "fas fa-list", category: "medication" },
+                { text: "Avez-vous oublié une prise récemment ?", icon: "fas fa-clock", category: "medication" },
+                { text: "Ressentez-vous des effets secondaires ?", icon: "fas fa-exclamation-triangle", category: "pain" },
+                { text: "À quelle heure prenez-vous vos médicaments ?", icon: "fas fa-calendar-alt", category: "medication" },
+                { text: "Avez-vous besoin d'un rappel automatique ?", icon: "fas fa-bell", category: "general" }
+            ],
+            medical: [
+                { text: "Expliquez-moi la drépanocytose simplement", icon: "fas fa-question-circle", category: "medical" },
+                { text: "Quels sont les symptômes à surveiller ?", icon: "fas fa-eye", category: "medical" },
+                { text: "Comment prévenir les crises ?", icon: "fas fa-shield-alt", category: "medical" },
+                { text: "Que faire en cas d'urgence ?", icon: "fas fa-ambulance", category: "pain" },
+                { text: "Quand consulter un médecin ?", icon: "fas fa-user-md", category: "medical" }
+            ],
+            emergency: [
+                { text: "Appelez-vous les secours maintenant ?", icon: "fas fa-phone", category: "pain" },
+                { text: "Êtes-vous seul(e) en ce moment ?", icon: "fas fa-users", category: "general" },
+                { text: "Avez-vous vos médicaments d'urgence ?", icon: "fas fa-first-aid", category: "medication" },
+                { text: "Pouvez-vous vous déplacer ?", icon: "fas fa-walking", category: "general" }
+            ],
+            vitals: [
+                { text: "Montrez-moi mes dernières mesures", icon: "fas fa-chart-bar", category: "medical" },
+                { text: "Mes constantes sont-elles normales ?", icon: "fas fa-heartbeat", category: "medical" },
+                { text: "Comment améliorer mes données vitales ?", icon: "fas fa-arrow-up", category: "medical" },
+                { text: "Y a-t-il des alertes sur mon bracelet ?", icon: "fas fa-bell", category: "general" }
+            ],
+            general: [
+                { text: "Comment puis-je mieux gérer ma maladie ?", icon: "fas fa-lightbulb", category: "medical" },
+                { text: "Quels sont vos autres services ?", icon: "fas fa-cogs", category: "general" },
+                { text: "Comment contacter mon médecin ?", icon: "fas fa-phone-alt", category: "medical" },
+                { text: "Puis-je avoir un résumé de notre conversation ?", icon: "fas fa-file-alt", category: "general" }
+            ]
+        };
+
+        // Détecter le contexte d'un message et suggérer des questions
+        function detectContextAndSuggestQuestions(message, response) {
+            let detectedContext = 'general';
+            const messageLower = message.toLowerCase();
+            const responseLower = response.toLowerCase();
+
+            // Détection intelligente du contexte basée sur les mots-clés
+            if (messageLower.includes('mal') || messageLower.includes('douleur') || messageLower.includes('souffre') ||
+                responseLower.includes('douleur') || responseLower.includes('urgence')) {
+                detectedContext = 'pain';
+            } else if (messageLower.includes('médicament') || messageLower.includes('traitement') || messageLower.includes('pilule') ||
+                      responseLower.includes('médicament') || responseLower.includes('traitement')) {
+                detectedContext = 'medication';
+            } else if (messageLower.includes('urgence') || messageLower.includes('grave') || messageLower.includes('hôpital') ||
+                      responseLower.includes('urgence') || responseLower.includes('samu')) {
+                detectedContext = 'emergency';
+            } else if (messageLower.includes('données') || messageLower.includes('vitales') || messageLower.includes('bracelet') ||
+                      responseLower.includes('données') || responseLower.includes('mesures')) {
+                detectedContext = 'vitals';
+            } else if (messageLower.includes('drépanocytose') || messageLower.includes('maladie') || messageLower.includes('symptôme') ||
+                      responseLower.includes('drépanocytose') || responseLower.includes('médical')) {
+                detectedContext = 'medical';
+            }
+
+            return detectedContext;
+        }
+
+        // Ajouter des questions cliquables après une réponse du bot
+        function addSuggestedQuestions(context, messageElement) {
+            const questions = contextualQuestions[context] || contextualQuestions.general;
+
+            // Mélanger et sélectionner 3-4 questions aléatoires
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            const selectedQuestions = shuffledQuestions.slice(0, Math.random() > 0.5 ? 4 : 3);
+
+            const suggestedDiv = document.createElement('div');
+            suggestedDiv.className = 'suggested-questions';
+            suggestedDiv.innerHTML = `
+                <h5>
+                    <i class="fas fa-lightbulb"></i>
+                    Questions suggérées :
+                </h5>
+                <div class="question-buttons">
+                    ${selectedQuestions.map(q => `
+                        <button class="question-btn ${q.category}"
+                                onclick="sendQuickMessage('${q.text.replace(/'/g, "\\'")}')">
+                            <i class="${q.icon} icon"></i>
+                            ${q.text}
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+
+            // Ajouter les questions après la bulle de message
+            const messageContent = messageElement.querySelector('.message-content');
+            if (messageContent) {
+                messageContent.appendChild(suggestedDiv);
+            }
+
+            // Animation d'apparition
+            setTimeout(() => {
+                suggestedDiv.style.opacity = '0';
+                suggestedDiv.style.transform = 'translateY(10px)';
+                suggestedDiv.style.transition = 'all 0.3s ease';
+
+                setTimeout(() => {
+                    suggestedDiv.style.opacity = '1';
+                    suggestedDiv.style.transform = 'translateY(0)';
+                }, 100);
+            }, 500);
+        }
+
+        // Supprimer les anciennes questions suggérées
+        function removePreviousSuggestions() {
+            const existingSuggestions = document.querySelectorAll('.suggested-questions');
+            existingSuggestions.forEach(suggestion => {
+                suggestion.style.opacity = '0';
+                suggestion.style.transform = 'translateY(-10px)';
+                setTimeout(() => suggestion.remove(), 300);
+            });
+        }
+
+        // Modifier la fonction addMessage pour inclure les questions suggérées
+        function addMessage(content, sender, isHtml = false, userMessage = '') {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            // Supprimer le message de bienvenue si présent
+            const welcomeMessage = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            // Supprimer les anciennes suggestions si c'est un nouveau message utilisateur
+            if (sender === 'user') {
+                removePreviousSuggestions();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const avatar = sender === 'bot' ?
+                '<i class="fas fa-user-md"></i>' :
+                '<i class="fas fa-user"></i>';
+
+            const time = getCurrentTime();
+
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        ${isHtml ? content : escapeHtml(content)}
+                    </div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+
+            // Ajouter des questions suggérées si c'est une réponse du bot
+            if (sender === 'bot' && userMessage) {
+                const context = detectContextAndSuggestQuestions(userMessage, content);
+                setTimeout(() => {
+                    addSuggestedQuestions(context, messageDiv);
+                }, 1000);
+            }
+
+            scrollToBottom();
+        }
+
+        // Modifier la fonction sendMessage pour passer le message utilisateur
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+            const message = input.value.trim();
+
+            if (!message || isTyping) return;
+
+            // Désactiver l'interface temporairement
+            input.disabled = true;
+            sendButton.disabled = true;
+
+            // Afficher le message utilisateur
+            addMessage(message, 'user');
+            input.value = '';
+            input.style.height = 'auto';
+
+            // Afficher l'indicateur de frappe
+            showTypingIndicator();
+
+            try {
+                const response = await fetch('http://localhost:5000/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId,
+                        is_voice: false
+                    })
+                });
+
+                const data = await response.json();
+                hideTypingIndicator();
+
+                if (data.success) {
+                    // Passer le message utilisateur pour la détection de contexte
+                    addMessage(data.response, 'bot', true, message);
+
+                    // Synthèse vocale pour les urgences et douleurs
+                    if (data.conversation_type === 'emergency' || data.conversation_type === 'pain_management') {
+                        speakResponse(data.response, true);
+                    }
+                } else {
+                    addMessage('Désolé, une erreur est survenue. Veuillez réessayer.', 'bot', true, message);
+                }
+
+            } catch (error) {
+                console.error('❌ Erreur envoi message:', error);
+                hideTypingIndicator();
+                addMessage('Erreur de connexion. Vérifiez que le serveur local est démarré sur le port 5000.', 'bot', true, message);
+            }
+
+            // Réactiver l'interface
+            input.disabled = false;
+            sendButton.disabled = !input.value.trim();
+            focusInput();
+        }
+
+        // Fonction pour effacer le chat
+        function clearChat() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = `
+                <div class="welcome-message fade-in">
+                    <div class="welcome-title">
+                        <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+                        Bienvenue sur Kidjamo Health Assistant
+                    </div>
+                    <p class="welcome-subtitle">Votre assistant santé intelligent spécialisé dans la drépanocytose. Je suis là pour vous aider 24h/7j avec des conseils personnalisés et un suivi médical.</p>
+
+                    <div class="feature-grid">
+                        <div class="feature-card" onclick="sendQuickMessage('J\\'ai mal')">
+                            <div class="feature-icon">
+                                <i class="fas fa-exclamation-circle" style="color: var(--warning-color);"></i>
+                            </div>
+                            <div class="feature-title">Signaler une douleur</div>
+                            <div class="feature-description">Décrivez votre douleur pour recevoir des conseils personnalisés et une évaluation rapide</div>
+                        </div>
+
+                        <div class="feature-card" onclick="sendQuickMessage('Mes données vitales')">
+                            <div class="feature-icon">
+                                <i class="fas fa-heartbeat" style="color: var(--danger-color);"></i>
+                            </div>
+                            <div class="feature-title">Données vitales</div>
+                            <div class="feature-description">Consultez et analysez vos mesures du bracelet IoT connecté</div>
+                        </div>
+
+                        <div class="feature-card" onclick="sendQuickMessage('Mes médicaments')">
+                            <div class="feature-icon">
+                                <i class="fas fa-pills" style="color: var(--primary-color);"></i>
+                            </div>
+                            <div class="feature-title">Médicaments</div>
+                            <div class="feature-description">Gestion intelligente et rappels automatiques de vos traitements</div>
+                        </div>
+
+                        <div class="feature-card" onclick="sendQuickMessage('Qu\\'est-ce que la drépanocytose ?')">
+                            <div class="feature-icon">
+                                <i class="fas fa-question-circle" style="color: var(--info-color);"></i>
+                            </div>
+                            <div class="feature-title">Informations médicales</div>
+                            <div class="feature-description">Posez vos questions sur la drépanocytose et obtenez des réponses fiables</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Générer un nouveau session ID
+            sessionId = generateSessionId();
+            console.log('🔄 Chat effacé, nouveau session ID:', sessionId);
+        }
+
+        // Fonction pour gérer les urgences
+        function handleEmergency() {
+            const input = document.getElementById('messageInput');
+            input.value = "🚨 URGENCE : J'ai besoin d'aide immédiatement !";
+            sendMessage();
+        }
+
+        // Fonction pour les paramètres (placeholder)
+        function toggleSettings() {
+            addMessage('⚙️ Les paramètres seront bientôt disponibles. En attendant, vous pouvez me demander "Comment ça marche ?" pour plus d\'informations.', 'bot', true);
+        }
+
+        console.log('✅ Kidjamo Health Assistant avec questions cliquables initialisé');
+    </script>
+</body>
+</html>

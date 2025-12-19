@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kidjamo Health Assistant - Local Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- AWS SDK supprimé - Mode local uniquement -->
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary-color: #34d399;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f97316;
+            --info-color: #3b82f6;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #94a3b8;
+            --border-color: #d1d5db;
+            --radius-sm: 0.125rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .chat-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: #fff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            height: 90vh;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 1;
+        }
+
+        .bot-avatar {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--success-color) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .header-info h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            margin: 0;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .emergency-button {
+            background: var(--danger-color);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .emergency-button:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 2rem;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            background: var(--bg-secondary);
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .welcome-message p {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .feature-card {
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 100%;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .message.user .message-avatar {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .message.bot .message-avatar {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius-lg);
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: var(--radius-sm);
+        }
+
+        .message.bot .message-bubble {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            text-align: right;
+        }
+
+        .message.user .message-time {
+            text-align: left;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-lg);
+            border-bottom-left-radius: var(--radius-sm);
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-light);
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0ms; }
+        .typing-dot:nth-child(2) { animation-delay: 160ms; }
+        .typing-dot:nth-child(3) { animation-delay: 320ms; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            resize: none;
+            font-family: inherit;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            max-height: 120px;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-button {
+            background: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 0.75rem;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .send-button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .quick-action:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .response-section {
+            margin-bottom: 1.2rem;
+        }
+
+        .response-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .response-section h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .response-section h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .response-section p {
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .response-section ul {
+            padding-left: 0;
+            list-style: none;
+            margin-bottom: 0.75rem;
+        }
+
+        .response-section li {
+            padding: 0.375rem 0;
+            border-bottom: 1px solid var(--bg-tertiary);
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .response-section li:last-child {
+            border-bottom: none;
+        }
+
+        .help-list li {
+            background: rgba(37, 99, 235, 0.05);
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.5rem;
+            border: none;
+        }
+
+        .urgent-list li {
+            padding: 0.5rem 0;
+            color: var(--danger-color);
+            font-weight: 500;
+        }
+
+        .emergency-alert {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+        }
+
+        .emergency-alert h3,
+        .emergency-alert h4 {
+            color: var(--danger-color);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .local-indicator {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+
+            .chat-container {
+                height: 100vh;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .chat-header {
+                padding: 1rem 1.5rem;
+            }
+
+            .header-info h1 {
+                font-size: 1.125rem;
+            }
+
+            .chat-messages {
+                padding: 1rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="bot-avatar">
+                    <i class="fas fa-user-md"></i>
+                </div>
+                <div class="header-info">
+                    <h1>Kidjamo Health Assistant</h1>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>Mode Local • Test sans AWS</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="header-btn" onclick="clearChat()" title="Nouvelle conversation">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button class="header-btn" onclick="toggleSettings()" title="Paramètres">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="emergency-button" onclick="handleEmergency()">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Urgence
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="local-indicator">
+                <i class="fas fa-desktop"></i>
+                Serveur local actif - Pas besoin d'AWS
+            </div>
+
+            <div class="welcome-message fade-in">
+                <div class="welcome-title">
+                    <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+                    Bienvenue sur Kidjamo Health Assistant
+                </div>
+                <p>Votre assistant santé intelligent spécialisé dans la drépanocytose. Mode test local activé.</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card" onclick="sendQuickMessage('J\'ai mal')">
+                        <div class="feature-icon">
+                            <i class="fas fa-exclamation-circle" style="color: var(--warning-color);"></i>
+                        </div>
+                        <div class="feature-title">Signaler une douleur</div>
+                        <div class="feature-description">Décrivez votre douleur pour recevoir des conseils personnalisés</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Mes données vitales')">
+                        <div class="feature-icon">
+                            <i class="fas fa-heartbeat" style="color: var(--danger-color);"></i>
+                        </div>
+                        <div class="feature-title">Données vitales</div>
+                        <div class="feature-description">Consultez vos mesures du bracelet IoT</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Mes médicaments')">
+                        <div class="feature-icon">
+                            <i class="fas fa-pills" style="color: var(--primary-color);"></i>
+                        </div>
+                        <div class="feature-title">Médicaments</div>
+                        <div class="feature-description">Gestion et rappels de vos traitements</div>
+                    </div>
+
+                    <div class="feature-card" onclick="sendQuickMessage('Questions sur la drépanocytose')">
+                        <div class="feature-icon">
+                            <i class="fas fa-question-circle" style="color: var(--info-color);"></i>
+                        </div>
+                        <div class="feature-title">Informations médicales</div>
+                        <div class="feature-description">Posez vos questions sur la drépanocytose</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="chat-input-container">
+            <div class="input-wrapper">
+                <textarea
+                    id="messageInput"
+                    class="input-field"
+                    placeholder="Écrivez votre message... (Appuyez sur Entrée pour envoyer)"
+                    rows="1"
+                ></textarea>
+                <button id="sendButton" class="send-button" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+
+            <div class="quick-actions">
+                <button class="quick-action" onclick="sendQuickMessage('Bonjour')">
+                    <i class="fas fa-hand-wave"></i>
+                    Saluer
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Comment ça marche ?')">
+                    <i class="fas fa-question"></i>
+                    Aide
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Qu\'est-ce que la drépanocytose ?')">
+                    <i class="fas fa-info"></i>
+                    Info drépanocytose
+                </button>
+                <button class="quick-action" onclick="sendQuickMessage('Je m\'ennuie')">
+                    <i class="fas fa-comment"></i>
+                    Humeur
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== MODE LOCAL - TOUT LE CODE AWS LEX EST COMMENTÉ ==========
+        /*
+        // Configuration AWS Lex supprimée - Mode local uniquement
+        const LEX_CONFIG = {
+            region: 'eu-west-1',
+            botId: 'HPYX4OKHYE',
+            botAliasId: 'AS7DAYY4IY',
+            localeId: 'fr_FR'
+        };
+        */
+
+        // Variables globales pour le mode local
+        let sessionId = generateSessionId();
+        let isTyping = false;
+        const LOCAL_SERVER_URL = 'http://localhost:5000'; // Serveur local Python
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Mode local activé - Pas d\'AWS');
+            setupEventListeners();
+            focusInput();
+            testLocalConnection();
+        });
+
+        // Test de connexion au serveur local
+        async function testLocalConnection() {
+            try {
+                console.log('🧪 Test de connexion au serveur local...');
+                const response = await fetch(`${LOCAL_SERVER_URL}/`, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+
+                if (response.ok) {
+                    console.log('✅ Serveur local connecté');
+                    updateConnectionStatus(true);
+                } else {
+                    throw new Error('Serveur non accessible');
+                }
+            } catch (error) {
+                console.error('❌ Serveur local non accessible:', error);
+                updateConnectionStatus(false);
+                showServerError();
+            }
+        }
+
+        function showServerError() {
+            addMessage(`
+                <div class="response-section emergency-alert">
+                    <h3>⚠️ Serveur local non démarré</h3>
+                    <p>Pour utiliser le chatbot en mode local, démarrez le serveur :</p>
+                </div>
+
+                <div class="response-section">
+                    <h4>Instructions de démarrage :</h4>
+                    <ul class="help-list">
+                        <li><strong>1.</strong> Ouvrez un terminal dans le dossier chat_bot/local_test/</li>
+                        <li><strong>2.</strong> Installez les dépendances : pip install -r requirements.txt</li>
+                        <li><strong>3.</strong> Démarrez le serveur : python chatbot_server.py</li>
+                        <li><strong>4.</strong> Le serveur sera accessible sur http://localhost:5000</li>
+                    </ul>
+                </div>
+            `, 'bot', true);
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDot = document.querySelector('.status-dot');
+            const statusText = document.querySelector('.status-indicator span');
+
+            if (connected) {
+                statusDot.style.background = 'var(--success-color)';
+                statusText.textContent = 'Mode Local • Serveur connecté';
+            } else {
+                statusDot.style.background = 'var(--danger-color)';
+                statusText.textContent = 'Mode Local • Serveur déconnecté';
+            }
+        }
+
+        function setupEventListeners() {
+            const messageInput = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                sendButton.disabled = !this.value.trim();
+            });
+
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            sendButton.disabled = true;
+        }
+
+        function generateSessionId() {
+            return 'local-session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function getCurrentTime() {
+            return new Date().toLocaleTimeString('fr-FR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+
+            if (!message || isTyping) return;
+
+            addMessage(message, 'user');
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            document.getElementById('sendButton').disabled = true;
+
+            await sendToLocalServer(message);
+        }
+
+        function sendQuickMessage(message) {
+            document.getElementById('messageInput').value = message;
+            sendMessage();
+        }
+
+        // ========== REMPLACEMENT DE LA LOGIQUE AWS LEX PAR LE SERVEUR LOCAL ==========
+        async function sendToLocalServer(message) {
+            showTypingIndicator();
+
+            try {
+                console.log('Envoi vers serveur local:', message);
+
+                const response = await fetch(`${LOCAL_SERVER_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        session_id: sessionId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur serveur: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(' Réponse reçue:', data);
+
+                hideTypingIndicator();
+
+                // Formatage de la réponse comme avec Lex
+                const formattedResponse = formatLocalResponse(data.response);
+                addMessage(formattedResponse, 'bot', true);
+                updateConnectionStatus(true);
+
+            } catch (error) {
+                console.error(' Erreur serveur local:', error);
+                hideTypingIndicator();
+
+                addMessage(`
+                    <div class="response-section emergency-alert">
+                        <h3> Erreur de connexion</h3>
+                        <p>Impossible de contacter le serveur local. Vérifiez qu'il est démarré sur le port 5000.</p>
+                    </div>
+                `, 'bot', true);
+                updateConnectionStatus(false);
+            }
+
+            focusInput();
+        }
+
+        // ========== FONCTIONS DE FORMATAGE ET UI (CONSERVÉES) ==========
+        function formatLocalResponse(rawResponse) {
+            console.log(' Formatage réponse locale:', rawResponse);
+
+            // Conversion des retours à la ligne en HTML
+            let content = rawResponse.replace(/\n/g, '<br>');
+
+            // Formatage markdown simple
+            content = content.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            content = content.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+
+            // Si la réponse contient des sections, on les formate
+            if (content.includes('📞') || content.includes('💊') || content.includes('📚')) {
+                return content; // Déjà bien formaté par le serveur
+            }
+
+            // Sinon, on encapsule dans une section simple
+            return `<div class="response-section"><p>${content}</p></div>`;
+        }
+
+        function addMessage(content, sender, isHtml = false) {
+            const messagesContainer = document.getElementById('chatMessages');
+
+            const welcomeMessage = messagesContainer.querySelector('.welcome-message');
+            if (welcomeMessage) {
+                welcomeMessage.remove();
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = sender === 'user' ?
+                '<i class="fas fa-user"></i>' :
+                '<i class="fas fa-user-md"></i>';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+
+            if (isHtml) {
+                bubbleDiv.innerHTML = content;
+            } else {
+                bubbleDiv.textContent = content;
+            }
+
+            const timeDiv = document.createElement('div');
+            timeDiv.className = 'message-time';
+            timeDiv.textContent = getCurrentTime();
+
+            contentDiv.appendChild(bubbleDiv);
+            contentDiv.appendChild(timeDiv);
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(contentDiv);
+
+            messagesContainer.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            if (isTyping) return;
+
+            isTyping = true;
+            const messagesContainer = document.getElementById('chatMessages');
+
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.innerHTML = '<i class="fas fa-user-md"></i>';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.innerHTML = `
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                <span>Assistant en train d'écrire...</span>
+            `;
+
+            contentDiv.appendChild(typingIndicator);
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(contentDiv);
+
+            messagesContainer.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+            isTyping = false;
+        }
+
+        function scrollToBottom() {
+            try {
+                const el = document.getElementById('chatMessages');
+                if (!el) return;
+                if (typeof el.scrollTo === 'function') {
+                    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+                } else {
+                    el.scrollTop = el.scrollHeight;
+                }
+            } catch (e) {
+                const el = document.getElementById('chatMessages');
+                if (el) el.scrollTop = el.scrollHeight;
+            }
+        }
+
+        function focusInput() {
+            const input = document.getElementById('messageInput');
+            if (input) {
+                input.focus();
+                const val = input.value;
+                input.value = '';
+                input.value = val;
+            }
+        }
+
+        function clearChat() {
+            const messagesContainer = document.getElementById('chatMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = `
+                    <div class="local-indicator">
+                        <i class="fas fa-desktop"></i>
+                        Serveur local actif - Nouvelle conversation
+                    </div>
+
+                    <div class="welcome-message fade-in">
+                        <div class="welcome-title">
+                            <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+                            Nouvelle conversation
+                        </div>
+                        <p>Votre assistant santé Kidjamo est prêt pour une nouvelle conversation.</p>
+                    </div>
+                `;
+            }
+
+            sessionId = generateSessionId();
+            console.log(' Nouvelle conversation locale initiée:', sessionId);
+            focusInput();
+        }
+
+        function toggleSettings() {
+            console.log(' Paramètres - Mode local');
+            addMessage(`
+                <div class="response-section">
+                    <h3> Paramètres - Mode Local</h3>
+                    <p>Configuration pour le mode test local.</p>
+                </div>
+
+                <div class="response-section">
+                    <h4> Options disponibles :</h4>
+                    <ul class="help-list">
+                        <li><strong>Serveur local</strong> - http://localhost:5000</li>
+                        <li><strong>Mode debug</strong> - Logs détaillés dans la console</li>
+                        <li><strong>Pas d'AWS</strong> - Fonctionne sans credentials</li>
+                        <li><strong>Test rapide</strong> - Réponses instantanées</li>
+                    </ul>
+                </div>
+            `, 'bot', true);
+        }
+
+        function handleEmergency() {
+            console.log(' URGENCE ACTIVÉE - MODE LOCAL');
+
+            const input = document.getElementById('messageInput');
+            const sendButton = document.getElementById('sendButton');
+
+            if (input) input.disabled = true;
+            if (sendButton) sendButton.disabled = true;
+
+            addMessage(`
+                <div class="response-section emergency-alert">
+                    <h3> ALERTE D'URGENCE MÉDICALE ACTIVÉE</h3>
+                    <p><strong>Cette fonction est réservée aux vraies urgences médicales !</strong></p>
+                </div>
+
+                <div class="response-section">
+                    <h4> NUMÉROS D'URGENCE :</h4>
+                    <ul class="urgent-list">
+                        <li><strong>115</strong> - Urgences médicales Cameroun</li>
+                        <li><strong>112</strong> - Numéro d'urgence</li>
+                        <li><strong>115</strong> - Service d'aide médicale urgente</li>
+                    </ul>
+                </div>
+
+                <div class="response-section">
+                    <h4> CENTRES D'URGENCE SPÉCIALISÉS :</h4>
+                    <ul class="help-list">
+                        <li><strong>CHU de Yaoundé</strong> - Service hématologie (+237) 222 23 40 30</li>
+                        <li><strong>Hôpital Laquintinie (Douala)</strong> - Urgences 24h/24</li>
+                        <li><strong>Hôpital Central (Yaoundé)</strong> - Service d'urgence</li>
+                    </ul>
+                </div>
+
+                <div class="response-section">
+                    <h4> INFORMATIONS À COMMUNIQUER :</h4>
+                    <ul class="help-list">
+                        <li><strong>Votre identité</strong> - Nom, prénom, âge</li>
+                        <li><strong>Maladie</strong> - "Patient drépanocytaire"</li>
+                        <li><strong>Symptômes actuels</strong> - Description précise de l'urgence</li>
+                        <li><strong>Localisation</strong> - Votre adresse exacte</li>
+                        <li><strong>Traitements en cours</strong> - Liste de vos médicaments</li>
+                    </ul>
+                </div>
+
+                <div class="response-section">
+                    <p><strong> Si ce n'était pas une vraie urgence, cliquez sur "Nouvelle conversation" pour reprendre l'utilisation normale.</strong></p>
+                </div>
+            `, 'bot', true);
+
+            setTimeout(() => {
+                if (input) input.disabled = false;
+                if (sendButton) sendButton.disabled = false;
+                focusInput();
+            }, 10000);
+        }
+    </script>
+</body>
+</html>

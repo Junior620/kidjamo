@@ -1,0 +1,388 @@
+{
+  "bot": {
+    "name": "KidjamoHealthBot",
+    "description": "Assistant santé intelligent pour patients atteints de drépanocytose",
+    "roleArn": "${lex_execution_role_arn}",
+    "dataPrivacy": {
+      "childDirected": false
+    },
+    "idleSessionTTLInSeconds": 900,
+    "botLocales": [
+      {
+        "localeId": "fr_FR",
+        "description": "Configuration française pour le bot Kidjamo",
+        "nluIntentConfidenceThreshold": 0.4,
+        "voiceSettings": {
+          "voiceId": "Lea",
+          "engine": "neural"
+        },
+        "slotTypes": [
+          {
+            "slotTypeName": "IntensiteDouleur",
+            "description": "Échelle d'intensité de la douleur de 1 à 10",
+            "slotTypeValues": [
+              {"sampleValue": {"value": "1"}, "synonyms": [{"value": "un"}, {"value": "très faible"}]},
+              {"sampleValue": {"value": "2"}, "synonyms": [{"value": "deux"}, {"value": "faible"}]},
+              {"sampleValue": {"value": "3"}, "synonyms": [{"value": "trois"}, {"value": "légère"}]},
+              {"sampleValue": {"value": "4"}, "synonyms": [{"value": "quatre"}, {"value": "modérée"}]},
+              {"sampleValue": {"value": "5"}, "synonyms": [{"value": "cinq"}, {"value": "moyenne"}]},
+              {"sampleValue": {"value": "6"}, "synonyms": [{"value": "six"}, {"value": "forte"}]},
+              {"sampleValue": {"value": "7"}, "synonyms": [{"value": "sept"}, {"value": "très forte"}]},
+              {"sampleValue": {"value": "8"}, "synonyms": [{"value": "huit"}, {"value": "intense"}]},
+              {"sampleValue": {"value": "9"}, "synonyms": [{"value": "neuf"}, {"value": "très intense"}]},
+              {"sampleValue": {"value": "10"}, "synonyms": [{"value": "dix"}, {"value": "insupportable"}, {"value": "maximale"}]}
+            ],
+            "valueSelectionStrategy": "TOP_RESOLUTION"
+          },
+          {
+            "slotTypeName": "LocalisationDouleur",
+            "description": "Localisation anatomique de la douleur",
+            "slotTypeValues": [
+              {"sampleValue": {"value": "abdomen"}, "synonyms": [{"value": "ventre"}, {"value": "estomac"}, {"value": "abdominale"}]},
+              {"sampleValue": {"value": "thorax"}, "synonyms": [{"value": "poitrine"}, {"value": "torse"}, {"value": "thoracique"}]},
+              {"sampleValue": {"value": "dos"}, "synonyms": [{"value": "dorsale"}, {"value": "colonne vertébrale"}, {"value": "échine"}]},
+              {"sampleValue": {"value": "jambes"}, "synonyms": [{"value": "membres inférieurs"}, {"value": "cuisses"}, {"value": "mollets"}]},
+              {"sampleValue": {"value": "bras"}, "synonyms": [{"value": "membres supérieurs"}, {"value": "avant-bras"}, {"value": "épaules"}]},
+              {"sampleValue": {"value": "tête"}, "synonyms": [{"value": "crâne"}, {"value": "céphalée"}, {"value": "migraine"}]},
+              {"sampleValue": {"value": "articulations"}, "synonyms": [{"value": "jointures"}, {"value": "genoux"}, {"value": "chevilles"}]},
+              {"sampleValue": {"value": "mains"}, "synonyms": [{"value": "doigts"}, {"value": "poignets"}, {"value": "paumes"}]},
+              {"sampleValue": {"value": "pieds"}, "synonyms": [{"value": "orteils"}, {"value": "talons"}, {"value": "plantes"}]}
+            ],
+            "valueSelectionStrategy": "TOP_RESOLUTION"
+          },
+          {
+            "slotTypeName": "ActionMedicament",
+            "description": "Actions liées aux médicaments",
+            "slotTypeValues": [
+              {"sampleValue": {"value": "prendre"}, "synonyms": [{"value": "prendre"}, {"value": "avaler"}, {"value": "consommer"}]},
+              {"sampleValue": {"value": "rappel"}, "synonyms": [{"value": "rappeler"}, {"value": "alerter"}, {"value": "notifier"}]},
+              {"sampleValue": {"value": "oublier"}, "synonyms": [{"value": "oublié"}, {"value": "manquer"}, {"value": "rater"}]},
+              {"sampleValue": {"value": "effets"}, "synonyms": [{"value": "effet secondaire"}, {"value": "réaction"}, {"value": "problème"}]}
+            ],
+            "valueSelectionStrategy": "TOP_RESOLUTION"
+          },
+          {
+            "slotTypeName": "NomMedicament",
+            "description": "Noms des médicaments couramment utilisés en drépanocytose",
+            "slotTypeValues": [
+              {"sampleValue": {"value": "Doliprane"}, "synonyms": [{"value": "paracétamol"}, {"value": "acétaminophène"}]},
+              {"sampleValue": {"value": "Morphine"}, "synonyms": [{"value": "morphine"}, {"value": "antalgique opioïde"}]},
+              {"sampleValue": {"value": "Hydroxyurée"}, "synonyms": [{"value": "Hydrea"}, {"value": "hydroxycarbamide"}]},
+              {"sampleValue": {"value": "Acide folique"}, "synonyms": [{"value": "folates"}, {"value": "vitamine B9"}]},
+              {"sampleValue": {"value": "Pénicilline"}, "synonyms": [{"value": "antibiotique"}, {"value": "prophylaxie"}]},
+              {"sampleValue": {"value": "Tramadol"}, "synonyms": [{"value": "antalgique"}, {"value": "analgésique"}]}
+            ],
+            "valueSelectionStrategy": "TOP_RESOLUTION"
+          }
+        ],
+        "intents": [
+          {
+            "intentName": "SignalerDouleur",
+            "description": "Signalement de douleur par le patient",
+            "sampleUtterances": [
+              {"utterance": "J'ai mal au {LocalisationDouleur} intensité {IntensiteDouleur}"},
+              {"utterance": "Je ressens une douleur {IntensiteDouleur} sur dix au niveau {LocalisationDouleur}"},
+              {"utterance": "Ça fait mal {IntensiteDouleur} dans le {LocalisationDouleur}"},
+              {"utterance": "J'ai une douleur de {IntensiteDouleur} au {LocalisationDouleur}"},
+              {"utterance": "Je souffre niveau {IntensiteDouleur} au {LocalisationDouleur}"},
+              {"utterance": "Douleur {LocalisationDouleur} intensité {IntensiteDouleur}"},
+              {"utterance": "J'ai très mal"},
+              {"utterance": "Ça fait mal"},
+              {"utterance": "Je souffre"},
+              {"utterance": "J'ai une crise de douleur"},
+              {"utterance": "C'est douloureux"}
+            ],
+            "slots": [
+              {
+                "slotName": "IntensiteDouleur",
+                "description": "Intensité de la douleur sur l'échelle 1-10",
+                "slotTypeName": "IntensiteDouleur",
+                "valueElicitationPrompt": {
+                  "messageGroups": [
+                    {
+                      "message": {
+                        "plainTextMessage": {
+                          "value": "Sur une échelle de 1 à 10, quelle est l'intensité de votre douleur ?"
+                        }
+                      }
+                    }
+                  ],
+                  "maxRetries": 2
+                }
+              },
+              {
+                "slotName": "LocalisationDouleur",
+                "description": "Localisation de la douleur",
+                "slotTypeName": "LocalisationDouleur",
+                "valueElicitationPrompt": {
+                  "messageGroups": [
+                    {
+                      "message": {
+                        "plainTextMessage": {
+                          "value": "Où ressentez-vous cette douleur exactement ?"
+                        }
+                      }
+                    }
+                  ],
+                  "maxRetries": 2
+                }
+              }
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "ConsulterVitales",
+            "description": "Consultation des données vitales récentes",
+            "sampleUtterances": [
+              {"utterance": "Montre-moi mes vitales"},
+              {"utterance": "Quelles sont mes dernières données vitales"},
+              {"utterance": "Comment vont mes constantes"},
+              {"utterance": "Mes données récentes"},
+              {"utterance": "État de mon bracelet"},
+              {"utterance": "Mes mesures du jour"},
+              {"utterance": "Rythme cardiaque actuel"},
+              {"utterance": "Ma saturation en oxygène"},
+              {"utterance": "Ma température"},
+              {"utterance": "Données du capteur"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "GererMedicaments",
+            "description": "Gestion des médicaments et traitements",
+            "sampleUtterances": [
+              {"utterance": "J'ai {ActionMedicament} mon {NomMedicament}"},
+              {"utterance": "Je veux {ActionMedicament} {NomMedicament}"},
+              {"utterance": "Rappel pour {NomMedicament}"},
+              {"utterance": "J'ai pris mes médicaments"},
+              {"utterance": "J'ai oublié mon traitement"},
+              {"utterance": "Gestion des médicaments"},
+              {"utterance": "Mes traitements"},
+              {"utterance": "Calendrier médicaments"},
+              {"utterance": "Prise de médicament"},
+              {"utterance": "Effets secondaires"}
+            ],
+            "slots": [
+              {
+                "slotName": "ActionMedicament",
+                "description": "Action à effectuer avec le médicament",
+                "slotTypeName": "ActionMedicament",
+                "valueElicitationPrompt": {
+                  "messageGroups": [
+                    {
+                      "message": {
+                        "plainTextMessage": {
+                          "value": "Que souhaitez-vous faire ? Prendre, rappel ou autre chose ?"
+                        }
+                      }
+                    }
+                  ],
+                  "maxRetries": 2
+                }
+              },
+              {
+                "slotName": "NomMedicament",
+                "description": "Nom du médicament",
+                "slotTypeName": "NomMedicament",
+                "valueElicitationPrompt": {
+                  "messageGroups": [
+                    {
+                      "message": {
+                        "plainTextMessage": {
+                          "value": "De quel médicament s'agit-il ?"
+                        }
+                      }
+                    }
+                  ],
+                  "maxRetries": 2
+                }
+              }
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "SignalerUrgence",
+            "description": "Signalement d'une situation d'urgence",
+            "sampleUtterances": [
+              {"utterance": "C'est urgent"},
+              {"utterance": "J'ai besoin d'aide rapidement"},
+              {"utterance": "Urgence médicale"},
+              {"utterance": "Appelez les secours"},
+              {"utterance": "Je vais très mal"},
+              {"utterance": "Situation critique"},
+              {"utterance": "Aidez-moi"},
+              {"utterance": "C'est grave"},
+              {"utterance": "Crise sévère"},
+              {"utterance": "Je ne me sens pas bien du tout"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "DemanderAide",
+            "description": "Demande d'aide générale ou d'information",
+            "sampleUtterances": [
+              {"utterance": "Aide"},
+              {"utterance": "Comment ça marche"},
+              {"utterance": "Que peux-tu faire"},
+              {"utterance": "À quoi sers-tu"},
+              {"utterance": "Aide-moi"},
+              {"utterance": "Comment utiliser"},
+              {"utterance": "Fonctionnalités"},
+              {"utterance": "Guide d'utilisation"},
+              {"utterance": "Mode d'emploi"},
+              {"utterance": "Qu'est-ce que tu peux faire"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "FallbackIntent",
+            "description": "Intention par défaut pour les requêtes non comprises",
+            "parentIntentSignature": "AMAZON.FallbackIntent",
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "ConversationGenerale",
+            "description": "Conversations générales et questions diverses",
+            "sampleUtterances": [
+              {"utterance": "Bonjour"},
+              {"utterance": "Salut"},
+              {"utterance": "Comment allez-vous"},
+              {"utterance": "Ça va"},
+              {"utterance": "Comment ça va"},
+              {"utterance": "Bonne journée"},
+              {"utterance": "Bonsoir"},
+              {"utterance": "Au revoir"},
+              {"utterance": "Merci"},
+              {"utterance": "Merci beaucoup"},
+              {"utterance": "C'est gentil"},
+              {"utterance": "Parfait"},
+              {"utterance": "D'accord"},
+              {"utterance": "OK"},
+              {"utterance": "Très bien"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "QuestionsGenerales",
+            "description": "Questions générales sur divers sujets",
+            "sampleUtterances": [
+              {"utterance": "Quelle heure est-il"},
+              {"utterance": "Quel jour sommes-nous"},
+              {"utterance": "Quelle est la date aujourd'hui"},
+              {"utterance": "Comment s'appelle cette application"},
+              {"utterance": "Qui es-tu"},
+              {"utterance": "Quel est ton nom"},
+              {"utterance": "Comment tu t'appelles"},
+              {"utterance": "Raconte-moi une blague"},
+              {"utterance": "Dis-moi quelque chose d'intéressant"},
+              {"utterance": "Parle-moi de toi"},
+              {"utterance": "Qu'est-ce que tu penses de"},
+              {"utterance": "Peux-tu m'expliquer"},
+              {"utterance": "Comment fonctionne"},
+              {"utterance": "Pourquoi"},
+              {"utterance": "Qu'est-ce que c'est"},
+              {"utterance": "Définition de"},
+              {"utterance": "Explique-moi"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "DiscussionLibre",
+            "description": "Discussion libre et conversation ouverte",
+            "sampleUtterances": [
+              {"utterance": "Je m'ennuie"},
+              {"utterance": "On peut discuter"},
+              {"utterance": "J'aimerais parler"},
+              {"utterance": "Raconte-moi une histoire"},
+              {"utterance": "Je me sens seul"},
+              {"utterance": "Tu veux bien me tenir compagnie"},
+              {"utterance": "Parlons de quelque chose"},
+              {"utterance": "J'ai envie de bavarder"},
+              {"utterance": "Dis-moi ce que tu en penses"},
+              {"utterance": "Quelle est ton opinion"},
+              {"utterance": "Tu crois que"},
+              {"utterance": "Selon toi"},
+              {"utterance": "À ton avis"},
+              {"utterance": "Je pense que"},
+              {"utterance": "Il paraît que"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "ConseilsVieQuotidienne",
+            "description": "Conseils et discussions sur la vie quotidienne",
+            "sampleUtterances": [
+              {"utterance": "Comment bien dormir"},
+              {"utterance": "Conseils pour être en forme"},
+              {"utterance": "Comment gérer le stress"},
+              {"utterance": "Activités pour se détendre"},
+              {"utterance": "Comment avoir confiance en soi"},
+              {"utterance": "Conseils pour étudier"},
+              {"utterance": "Comment organiser ma journée"},
+              {"utterance": "Que faire quand on s'ennuie"},
+              {"utterance": "Comment faire de nouveaux amis"},
+              {"utterance": "Activités amusantes"},
+              {"utterance": "Comment rester motivé"},
+              {"utterance": "Conseils pour les examens"},
+              {"utterance": "Comment bien manger"},
+              {"utterance": "Recettes faciles"},
+              {"utterance": "Sport recommandé"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          },
+          {
+            "intentName": "CultureEducation",
+            "description": "Questions sur la culture, l'éducation et la connaissance générale",
+            "sampleUtterances": [
+              {"utterance": "Parle-moi de l'histoire"},
+              {"utterance": "Qu'est-ce que la science"},
+              {"utterance": "Explique-moi les mathématiques"},
+              {"utterance": "Comment fonctionne le corps humain"},
+              {"utterance": "Qu'est-ce que l'art"},
+              {"utterance": "Parle-moi de musique"},
+              {"utterance": "Recommande-moi un livre"},
+              {"utterance": "Film intéressant"},
+              {"utterance": "Série à regarder"},
+              {"utterance": "Comment apprendre une langue"},
+              {"utterance": "Découvertes scientifiques récentes"},
+              {"utterance": "Événements historiques importants"},
+              {"utterance": "Personnages célèbres"},
+              {"utterance": "Pays à visiter"},
+              {"utterance": "Cultures du monde"}
+            ],
+            "fulfillmentCodeHook": {
+              "enabled": true
+            }
+          }
+        ]
+      }
+    ],
+    "testBotAliases": [
+      {
+        "botAliasName": "TestBotAlias",
+        "description": "Alias de test pour le développement",
+        "botVersion": "DRAFT"
+      }
+    ]
+  }
+}

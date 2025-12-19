@@ -1,0 +1,49 @@
+{
+  "session_id": "simulation_20250911_125620",
+  "timestamp": "2025-09-11T13:03:49.189325",
+  "total_messages": 6,
+  "conversation": [
+    {
+      "timestamp": "2025-09-11T12:56:22.738644",
+      "user_message": "Bonjour",
+      "bot_response": "Bonjour ! Je suis votre assistant santé Kidjamo Je suis spécialisé dans l'accompagnement des patients atteints de drépanocytose. Je peux vous aider avec : 🩺 Gestion de la douleur - Évaluation et conseils personnalisés 💊 Suivi des médicaments - Rappels et interactions 📊 Données vitales - Analyse de vos mesures IoT 🚨 Urgences médicales - Protocoles et contacts d'urgence 📚 Éducation thérapeutique - Informations sur votre maladie Comment puis-je vous aider aujourd'hui ?",
+      "conversation_type": "greeting",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:56:26.767690",
+      "user_message": "J'ai oublié de prendre mon hydroxyurée ce matin",
+      "bot_response": "Oubli de médicament Que faire maintenant ? Si moins de 12h de retard - Prenez votre dose maintenant Si plus de 12h de retard - Sautez cette dose, reprenez demain Ne doublez jamais la dose - risque de surdosage Notez l'oubli - informez votre médecin Prévenir les oublis Alarmes téléphone - même heure chaque jour Pilulier hebdomadaire - organisation visuelle Application de rappel - notifications automatiques Routine quotidienne - associer à un moment fixe",
+      "conversation_type": "medication",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:56:30.822304",
+      "user_message": "Que faire ?",
+      "bot_response": "Gestion pratique des médicaments Actions recommandées Respectez les horaires - Régularité essentielle Ne modifiez jamais seul - Consultez avant tout changement Surveillez votre état - Notez effets et améliorations Communiquez - Informez votre équipe médicale Précautions importantes Stock suffisant - Ne jamais être en rupture Voyage - Emportez plus que nécessaire Interactions - Signalez tous vos traitements Conservation - Lieu sec, température ambiante",
+      "conversation_type": "medication",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:56:34.866111",
+      "user_message": "À quelle heure je dois la prendre normalement ?",
+      "bot_response": "Horaires de prise des médicaments Hydroxyurée (Siklos) Moment idéal - Le matin, toujours à la même heure Avec les repas - Petit-déjeuner pour réduire les nausées Régularité cruciale - Même heure tous les jours Si oubli - Voir conseils spécifiques ci-dessus Acide folique Flexible - Matin ou soir, selon préférence Avec ou sans repas - Bien toléré Simultané possible - Peut être pris avec l'hydroxyurée Conseils pratiques Choisissez un moment fixe - 8h ou 9h par exemple Associez à une routine - petit-déjeuner, brossage des dents Préparez à l'avance - pilulier pour la semaine",
+      "conversation_type": "medication",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:56:38.923403",
+      "user_message": "Quels sont les effets secondaires ?",
+      "bot_response": "Effets secondaires des médicaments Hydroxyurée (Siklos) Fréquents - Nausées, fatigue, maux de tête légers Surveillance nécessaire - Baisse des globules blancs Rares mais sérieux - Ulcères de jambe, cancer (très rare) Acide folique Très bien toléré - Peu d'effets secondaires Parfois - Troubles digestifs légers Contactez votre médecin si Fièvre persistante - possible infection Ulcères inhabituels - jambes, bouche Fatigue extrême - possible anémie sévère Saignements anormaux - nez, gencives",
+      "conversation_type": "medication",
+      "success": true
+    },
+    {
+      "timestamp": "2025-09-11T12:56:42.982616",
+      "user_message": "Merci pour les conseils",
+      "bot_response": "Prévention des crises De nombreuses mesures peuvent réduire le risque de crises et améliorer votre bien-être. Hydratation Boire 2-3 litres d'eau par jour - fluidifie le sang Éviter la déshydratation - attention chaleur, sport Eau tiède préférée - éviter trop froid ou chaud Éviter les déclencheurs Températures extrêmes - froid intense, chaleur excessive Altitude élevée - manque d'oxygène Stress important - techniques de relaxation Fatigue excessive - respecter son rythme Infections - se soigner rapidement Mode de vie sain Activité physique adaptée - marche, natation douce Alimentation équilibrée - riche en fer et vitamines Sommeil régulier - 7-8h par nuit Suivi médical régulier - tous les 3-6 mois",
+      "conversation_type": "medical_info",
+      "success": true
+    }
+  ]
+}

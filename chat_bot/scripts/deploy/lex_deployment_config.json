@@ -1,0 +1,14 @@
+{
+  "deployment_info": {
+    "bot_id": "HPYX4OKHYE",
+    "bot_name": "kidjamo-dev-health-bot",
+    "alias_id": "AS7DAYY4IY",
+    "alias_name": "dev-alias",
+    "lambda_arn": "arn:aws:lambda:eu-west-1:930900578484:function:kidjamo-dev-lex-fulfillment",
+    "kendra_index_id": "b7472109-44e4-42de-9192-2b6dbe1493cc"
+  },
+  "region": "eu-west-1",
+  "environment": "dev",
+  "deployment_time": 1756861407.789036,
+  "status": "SUCCESS"
+}

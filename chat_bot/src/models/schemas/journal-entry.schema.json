@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kidjamo.tech4good.fr/schemas/journal-entry.schema.json",
+  "title": "Entrée de journal de santé",
+  "description": "Schéma pour les entrées de journal saisies par le patient",
+  "type": "object",
+  "required": [
+    "entry_id",
+    "patient_id",
+    "timestamp",
+    "entry_type"
+  ],
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "pattern": "^ENTRY-[A-Z0-9]{12}$",
+      "description": "Identifiant unique de l'entrée",
+      "examples": ["ENTRY-ABC123DEF456"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Identifiant anonymisé du patient"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Horodatage de création en UTC"
+    },
+    "entry_type": {
+      "type": "string",
+      "enum": [
+        "PAIN_REPORT",
+        "SYMPTOM_LOG",
+        "MEDICATION_INTAKE",
+        "MOOD_CHECK",
+        "ACTIVITY_LOG",
+        "GENERAL_NOTE"
+      ],
+      "description": "Type d'entrée de journal"
+    },
+    "pain_assessment": {
+      "type": "object",
+      "description": "Évaluation de la douleur",
+      "properties": {
+        "intensity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Intensité de la douleur sur l'échelle 1-10"
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "abdomen", "thorax", "dos", "jambes", "bras",
+              "tête", "articulations", "mains", "pieds"
+            ]
+          },
+          "description": "Localisations anatomiques de la douleur"
+        },
+        "quality": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "lancinante", "brûlante", "sourde", "aiguë",
+              "pulsatile", "crampes", "raideur"
+            ]
+          },
+          "description": "Qualité de la douleur"
+        },
+        "duration": {
+          "type": "string",
+          "description": "Durée de la douleur",
+          "examples": ["30min", "2h", "toute la nuit"]
+        },
+        "triggers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Facteurs déclenchants identifiés"
+        }
+      }
+    },
+    "symptoms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symptom": {
+            "type": "string",
+            "description": "Description du symptôme"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["MILD", "MODERATE", "SEVERE"],
+            "description": "Sévérité du symptôme"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Durée du symptôme"
+          }
+        },
+        "required": ["symptom"]
+      },
+      "description": "Liste des symptômes rapportés"
+    },
+    "medication_taken": {
+      "type": "object",
+      "description": "Médicament pris",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Nom du médicament"
+        },
+        "dosage": {
+          "type": "string",
+          "description": "Dosage pris"
+        },
+        "time_taken": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Heure de prise"
+        },
+        "effectiveness": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Efficacité ressentie (1-10)"
+        },
+        "side_effects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Effets secondaires observés"
+        }
+      }
+    },
+    "mood": {
+      "type": "object",
+      "description": "État d'humeur et bien-être",
+      "properties": {
+        "mood_score": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Score d'humeur (1=très mauvais, 10=excellent)"
+        },
+        "energy_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Niveau d'énergie (1-10)"
+        },
+        "stress_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Niveau de stress (1-10)"
+        },
+        "sleep_quality": {
+          "type": "string",
+          "enum": ["POOR", "FAIR", "GOOD", "EXCELLENT"],
+          "description": "Qualité du sommeil"
+        }
+      }
+    },
+    "activity": {
+      "type": "object",
+      "description": "Activité physique et quotidienne",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "REST", "LIGHT_WALK", "MODERATE_EXERCISE",
+            "SCHOOL", "WORK", "SOCIAL_ACTIVITY"
+          ],
+          "description": "Type d'activité"
+        },
+        "duration": {
+          "type": "string",
+          "description": "Durée de l'activité"
+        },
+        "intensity": {
+          "type": "string",
+          "enum": ["LOW", "MODERATE", "HIGH"],
+          "description": "Intensité de l'activité"
+        },
+        "tolerance": {
+          "type": "string",
+          "enum": ["POOR", "FAIR", "GOOD", "EXCELLENT"],
+          "description": "Tolérance à l'activité"
+        }
+      }
+    },
+    "free_text": {
+      "type": "string",
+      "maxLength": 1000,
+      "description": "Note libre du patient"
+    },
+    "attachments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["IMAGE", "AUDIO", "DOCUMENT"]
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Pièces jointes (photos, notes vocales, etc.)"
+    },
+    "chatbot_context": {
+      "type": "object",
+      "description": "Contexte de la conversation avec le chatbot",
+      "properties": {
+        "session_id": {
+          "type": "string"
+        },
+        "intent_detected": {
+          "type": "string"
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "nlp_entities": {
+          "type": "object",
+          "description": "Entités extraites par Comprehend Medical"
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "description": "Paramètres de confidentialité",
+      "properties": {
+        "share_with_caregivers": {
+          "type": "boolean",
+          "default": true
+        },
+        "share_with_medical_team": {
+          "type": "boolean",
+          "default": true
+        },
+        "anonymize_for_research": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    }
+  }
+}
+

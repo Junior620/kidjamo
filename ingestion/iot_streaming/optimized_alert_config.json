@@ -1,0 +1,12 @@
+{
+  "FALL_DETECTION": {
+    "threshold": 20.0,
+    "priority": "HIGH",
+    "description": "Chute r\u00e9elle d\u00e9tect\u00e9e"
+  },
+  "HYPERACTIVITY_DETECTED": {
+    "threshold": 25.0,
+    "priority": "MEDIUM",
+    "description": "Hyperactivit\u00e9 significative"
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "Comment": "Pipeline IoT Médical Kidjamo - Orchestration Raw→Bronze→Silver→Gold→Postgres",
+  "StartAt": "RawToBronze",
+  "States": {
+    "RawToBronze": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "kidjamo-dev-raw-to-bronze",
+        "Arguments": {
+          "--job-bookmark-option": "job-bookmark-enable"
+        }
+      },
+      "ResultPath": "$.RawToBronzeResult",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.Error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "BronzeToSilver"
+    },
+
+    "BronzeToSilver": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "kidjamo-dev-bronze-to-silver",
+        "Arguments": {
+          "--job-bookmark-option": "job-bookmark-enable"
+        }
+      },
+      "ResultPath": "$.BronzeToSilverResult",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.TaskFailed"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.Error",
+          "Next": "NotifyFailure"
+        }
+      ],
+      "Next": "ParallelSilverProcessing"
+    },
+
+    "ParallelSilverProcessing": {
+      "Type": "Parallel",
+      "Comment": "Traiter Silver vers Postgres ET Gold en parallèle",
+      "Branches": [
+        {
+          "StartAt": "SilverToPostgres",
+          "States": {
+            "SilverToPostgres": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "kidjamo-dev-silver-to-postgres",
+                "Arguments": {
+                  "--job-bookmark-option": "job-bookmark-enable"
+                }
+              },
+              "ResultPath": "$.SilverToPostgresResult",
+              "Retry": [
+                {
+                  "ErrorEquals": ["States.TaskFailed"],
+                  "IntervalSeconds": 30,
+                  "MaxAttempts": 3,
+                  "BackoffRate": 2.0
+                }
+              ],
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "ParallelGoldCreation",
+          "States": {
+            "ParallelGoldCreation": {
+              "Type": "Parallel",
+              "Comment": "Créer les 3 tables Gold en parallèle",
+              "Branches": [
+                {
+                  "StartAt": "SilverToGold",
+                  "States": {
+                    "SilverToGold": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                      "Parameters": {
+                        "JobName": "kidjamo-dev-silver-to-gold",
+                        "Arguments": {
+                          "--job-bookmark-option": "job-bookmark-enable"
+                        }
+                      },
+                      "ResultPath": "$.GoldResult",
+                      "Retry": [
+                        {
+                          "ErrorEquals": ["States.TaskFailed"],
+                          "IntervalSeconds": 30,
+                          "MaxAttempts": 2,
+                          "BackoffRate": 2.0
+                        }
+                      ],
+                      "End": true
+                    }
+                  }
+                }
+              ],
+              "ResultPath": "$.GoldCreationResults",
+              "Next": "ParallelGoldToPostgres"
+            },
+
+            "ParallelGoldToPostgres": {
+              "Type": "Parallel",
+              "Comment": "Charger les 3 tables Gold vers Postgres en parallèle",
+              "Branches": [
+                {
+                  "StartAt": "GoldAnalyticsToPostgres",
+                  "States": {
+                    "GoldAnalyticsToPostgres": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                      "Parameters": {
+                        "JobName": "kidjamo-dev-gold-analytics-to-postgres",
+                        "Arguments": {
+                          "--job-bookmark-option": "job-bookmark-enable"
+                        }
+                      },
+                      "ResultPath": "$.GoldAnalyticsToPostgresResult",
+                      "Retry": [
+                        {
+                          "ErrorEquals": ["States.TaskFailed"],
+                          "IntervalSeconds": 30,
+                          "MaxAttempts": 2,
+                          "BackoffRate": 2.0
+                        }
+                      ],
+                      "End": true
+                    }
+                  }
+                },
+                {
+                  "StartAt": "GoldHourlyToPostgres",
+                  "States": {
+                    "GoldHourlyToPostgres": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                      "Parameters": {
+                        "JobName": "kidjamo-dev-gold-hourly-to-postgres",
+                        "Arguments": {
+                          "--job-bookmark-option": "job-bookmark-enable"
+                        }
+                      },
+                      "ResultPath": "$.GoldHourlyToPostgresResult",
+                      "Retry": [
+                        {
+                          "ErrorEquals": ["States.TaskFailed"],
+                          "IntervalSeconds": 30,
+                          "MaxAttempts": 2,
+                          "BackoffRate": 2.0
+                        }
+                      ],
+                      "End": true
+                    }
+                  }
+                },
+                {
+                  "StartAt": "GoldDailyToPostgres",
+                  "States": {
+                    "GoldDailyToPostgres": {
+                      "Type": "Task",
+                      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+                      "Parameters": {
+                        "JobName": "kidjamo-dev-gold-daily-summary-to-postgres",
+                        "Arguments": {
+                          "--job-bookmark-option": "job-bookmark-enable"
+                        }
+                      },
+                      "ResultPath": "$.GoldDailyToPostgresResult",
+                      "Retry": [
+                        {
+                          "ErrorEquals": ["States.TaskFailed"],
+                          "IntervalSeconds": 30,
+                          "MaxAttempts": 2,
+                          "BackoffRate": 2.0
+                        }
+                      ],
+                      "End": true
+                    }
+                  }
+                }
+              ],
+              "ResultPath": "$.GoldToPostgresResults",
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultPath": "$.ParallelResults",
+      "Next": "NotifySuccess"
+    },
+
+    "NotifySuccess": {
+      "Type": "Succeed",
+      "Comment": "Pipeline exécuté avec succès"
+    },
+
+    "NotifyFailure": {
+      "Type": "Fail",
+      "Comment": "Pipeline échoué - vérifier les logs CloudWatch",
+      "Cause": "Un ou plusieurs jobs ont échoué",
+      "Error": "PipelineExecutionFailed"
+    }
+  }
+}
+

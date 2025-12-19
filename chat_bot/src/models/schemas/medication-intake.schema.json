@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kidjamo.tech4good.fr/schemas/medication-intake.schema.json",
+  "title": "Prise de médicament",
+  "description": "Schéma pour l'enregistrement des prises de médicaments",
+  "type": "object",
+  "required": [
+    "intake_id",
+    "patient_id",
+    "medication_name",
+    "scheduled_time",
+    "status",
+    "timestamp"
+  ],
+  "properties": {
+    "intake_id": {
+      "type": "string",
+      "pattern": "^INTAKE-[A-Z0-9]{12}$",
+      "description": "Identifiant unique de la prise",
+      "examples": ["INTAKE-ABC123DEF456"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Identifiant anonymisé du patient"
+    },
+    "medication_name": {
+      "type": "string",
+      "description": "Nom du médicament"
+    },
+    "medication_code": {
+      "type": "string",
+      "description": "Code RxNorm ou autre référence médicament"
+    },
+    "scheduled_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Heure prévue de la prise"
+    },
+    "actual_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Heure réelle de la prise"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Horodatage d'enregistrement"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["TAKEN", "MISSED", "DELAYED", "PARTIAL", "REFUSED"],
+      "description": "Statut de la prise"
+    },
+    "dosage": {
+      "type": "object",
+      "description": "Dosage du médicament",
+      "properties": {
+        "prescribed_amount": {
+          "type": "string",
+          "description": "Dosage prescrit"
+        },
+        "actual_amount": {
+          "type": "string",
+          "description": "Dosage réellement pris"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unité (mg, ml, comprimé, etc.)"
+        }
+      }
+    },
+    "method": {
+      "type": "string",
+      "enum": ["ORAL", "INJECTION", "TOPICAL", "INHALED", "OTHER"],
+      "description": "Méthode d'administration"
+    },
+    "reason": {
+      "type": "string",
+      "description": "Raison de la prise (douleur, prévention, etc.)"
+    },
+    "effectiveness": {
+      "type": "object",
+      "description": "Efficacité du médicament",
+      "properties": {
+        "pain_relief": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Niveau de soulagement (1-10)"
+        },
+        "time_to_effect": {
+          "type": "string",
+          "description": "Temps avant effet (ex: 30min)"
+        },
+        "duration_of_effect": {
+          "type": "string",
+          "description": "Durée d'efficacité"
+        }
+      }
+    },
+    "side_effects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "effect": {
+            "type": "string",
+            "description": "Description de l'effet secondaire"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["MILD", "MODERATE", "SEVERE"],
+            "description": "Sévérité de l'effet"
+          },
+          "onset_time": {
+            "type": "string",
+            "description": "Délai d'apparition"
+          }
+        }
+      },
+      "description": "Effets secondaires observés"
+    },
+    "context": {
+      "type": "object",
+      "description": "Contexte de la prise",
+      "properties": {
+        "pain_level_before": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "pain_level_after": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "with_food": {
+          "type": "boolean"
+        },
+        "activities_before": {
+          "type": "string"
+        },
+        "stress_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        }
+      }
+    },
+    "reminders": {
+      "type": "object",
+      "description": "Informations sur les rappels",
+      "properties": {
+        "reminder_sent": {
+          "type": "boolean"
+        },
+        "reminder_acknowledged": {
+          "type": "boolean"
+        },
+        "delay_from_reminder": {
+          "type": "string",
+          "description": "Délai depuis le rappel"
+        }
+      }
+    },
+    "chatbot_interaction": {
+      "type": "object",
+      "description": "Interaction avec le chatbot",
+      "properties": {
+        "reported_via_chatbot": {
+          "type": "boolean"
+        },
+        "session_id": {
+          "type": "string"
+        },
+        "confidence_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}
+

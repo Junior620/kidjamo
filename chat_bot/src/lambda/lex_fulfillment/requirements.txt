@@ -1,0 +1,7 @@
+# Requirements pour les fonctions Lambda du chatbot Kidjamo
+boto3>=1.34.0
+botocore>=1.34.0
+requests>=2.31.0
+python-dateutil>=2.8.2
+jsonschema>=4.17.0
+

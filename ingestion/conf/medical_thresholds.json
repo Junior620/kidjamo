@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "last_updated": "2025-08-17",
+  "age_groups": {
+    "G1": {"min_age": 0, "max_age": 1, "name": "0-1 ans"},
+    "G2": {"min_age": 1, "max_age": 5, "name": "1-5 ans"},
+    "G3": {"min_age": 6, "max_age": 12, "name": "6-12 ans"},
+    "G4": {"min_age": 13, "max_age": 17, "name": "13-17 ans"},
+    "G5": {"min_age": 18, "max_age": 59, "name": "18-59 ans"},
+    "G6": {"min_age": 60, "max_age": 80, "name": "60-80 ans"}
+  },
+  "thresholds": {
+    "temperature": {
+      "G1": {"normal": [36.4, 37.5], "vigilance": [37.6, 37.9], "alert": 38.0, "emergency": 38.5, "hypothermia": 36.0},
+      "G2": {"normal": [36.4, 37.4], "vigilance": [37.5, 37.9], "alert": 38.0, "emergency": 39.0, "hypothermia": 36.0},
+      "G3": {"normal": [36.4, 37.4], "vigilance": [37.5, 37.9], "alert": 38.0, "emergency": 39.0, "hypothermia": 36.0},
+      "G4": {"normal": [36.1, 37.3], "vigilance": [37.4, 37.9], "alert": 38.0, "emergency": 39.0, "hypothermia": 35.8},
+      "G5": {"normal": [36.1, 37.3], "vigilance": [37.4, 37.9], "alert": 38.0, "emergency": 39.0, "hypothermia": 35.8},
+      "G6": {"normal": [36.0, 37.2], "vigilance": 37.8, "alert": 38.0, "emergency": 38.5, "hypothermia": 35.8}
+    },
+    "spo2": {
+      "G1": {"normal": 95, "vigilance": 94, "alert": 93, "emergency": 90, "critical": 88},
+      "G2": {"normal": 95, "vigilance": 94, "alert": 93, "emergency": 90, "critical": 88},
+      "G3": {"normal": 95, "vigilance": 94, "alert": 93, "emergency": 89, "critical": 88},
+      "G4": {"normal": 94, "vigilance": 93, "alert": 92, "emergency": 88, "critical": 88},
+      "G5": {"normal": 94, "vigilance": 93, "alert": 92, "emergency": 88, "critical": 88},
+      "G6": {"normal": 94, "vigilance": [93, 94], "alert": 92, "emergency": 88, "critical": 88}
+    },
+    "heart_rate": {
+      "G1": {"normal": [100, 160], "vigilance": [161, 165], "alert": 166, "emergency": 180, "bradycardia": 90},
+      "G2": {"normal": [90, 140], "vigilance": [141, 144], "alert": 145, "emergency": 160, "bradycardia": 80},
+      "G3": {"normal": [75, 118], "vigilance": [119, 120], "alert": 121, "emergency": 140, "bradycardia": 60},
+      "G4": {"normal": [60, 100], "vigilance": [101, 109], "alert": 110, "emergency": 130, "bradycardia": 50},
+      "G5": {"normal": [60, 100], "vigilance": [101, 109], "alert": 110, "emergency": 130, "bradycardia": 50},
+      "G6": {"normal": [60, 100], "vigilance": [101, 109], "alert": 110, "emergency": 125, "bradycardia": 50}
+    },
+    "respiratory_rate": {
+      "G1": {"normal": [30, 53], "vigilance": [54, 58], "alert": 59, "emergency": 65, "bradypnea": 24},
+      "G2": {"normal": [22, 37], "vigilance": [38, 40], "alert": 41, "emergency": 45, "bradypnea": 18},
+      "G3": {"normal": [18, 28], "vigilance": [29, 31], "alert": 32, "emergency": 36, "bradypnea": 14},
+      "G4": {"normal": [12, 20], "vigilance": [21, 24], "alert": 25, "emergency": 30, "bradypnea": 10},
+      "G5": {"normal": [12, 20], "vigilance": [21, 22], "alert": 23, "emergency": 28, "bradypnea": 10},
+      "G6": {"normal": [12, 22], "vigilance": [23, 24], "alert": 25, "emergency": 30, "bradypnea": 10}
+    },
+    "hydration": {
+      "all": {"normal": 85, "vigilance": 70, "alert": 50, "emergency": 40}
+    },
+    "heat_index": {
+      "all": {"normal": 32, "vigilance": 36, "alert": 40, "emergency": 41}
+    },
+    "ambient_temperature": {
+      "all": {
+        "normal": [18, 25],
+        "vigilance": [26, 30],
+        "alert": [31, 35],
+        "emergency": 36,
+        "cold_alert": 10,
+        "cold_emergency": 5
+      }
+    },
+    "environmental_risk": {
+      "all": {
+        "low": 0,
+        "moderate": 1,
+        "high": 2,
+        "extreme": 3
+      }
+    }
+  },
+  "critical_combinations": [
+    {
+      "id": "C1",
+      "name": "fever_hypoxia",
+      "conditions": ["temperature >= alert", "spo2 <= alert"],
+      "severity": "critical",
+      "description": "Fièvre ≥ 38°C ET SpO₂ ≤ 93% (≤94% si 0-5 ans)"
+    },
+    {
+      "id": "C2",
+      "name": "respiratory_distress",
+      "conditions": ["spo2 <= emergency", "respiratory_rate >= alert"],
+      "severity": "critical",
+      "description": "SpO₂ ≤ 90% ET tachypnée"
+    },
+    {
+      "id": "C3",
+      "name": "pain_hypoxia",
+      "conditions": ["pain_score >= 7", "spo2 <= alert"],
+      "severity": "critical",
+      "description": "EVA ≥ 7/10 ET SpO₂ ≤ 92%"
+    },
+    {
+      "id": "C4",
+      "name": "dehydration_heat",
+      "conditions": ["hydration <= alert", "heat_index >= alert", "activity >= moderate"],
+      "severity": "critical",
+      "description": "Hydratation faible ET HI ≥ 38°C ET activité"
+    },
+    {
+      "id": "C5",
+      "name": "fever_tachypnea",
+      "conditions": ["temperature >= alert", "respiratory_rate >= alert"],
+      "severity": "critical",
+      "description": "Fièvre ≥ 38°C ET tachypnée"
+    }
+  ]
+}
+

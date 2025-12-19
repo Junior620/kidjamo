@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kidjamo.tech4good.fr/schemas/alert-event.schema.json",
+  "title": "Événement d'alerte médicale",
+  "description": "Schéma pour les alertes générées par le système de surveillance",
+  "type": "object",
+  "required": [
+    "alert_id",
+    "patient_id",
+    "alert_type",
+    "severity",
+    "timestamp",
+    "status"
+  ],
+  "properties": {
+    "alert_id": {
+      "type": "string",
+      "pattern": "^ALERT-[A-Z0-9]{12}$",
+      "description": "Identifiant unique de l'alerte",
+      "examples": ["ALERT-ABC123DEF456"]
+    },
+    "patient_id": {
+      "type": "string",
+      "description": "Identifiant anonymisé du patient"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "VITAL_THRESHOLD_EXCEEDED",
+        "PAIN_CRISIS_DETECTED",
+        "MEDICATION_MISSED",
+        "DEVICE_DISCONNECTED",
+        "EMERGENCY_DECLARED",
+        "SYMPTOM_CORRELATION",
+        "CHATBOT_ESCALATION"
+      ],
+      "description": "Type d'alerte médicale"
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+      "description": "Niveau de gravité de l'alerte"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["OPEN", "ACKNOWLEDGED", "IN_PROGRESS", "RESOLVED", "CLOSED"],
+      "description": "Statut actuel de l'alerte"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Horodatage de création de l'alerte en UTC"
+    },
+    "metric": {
+      "type": "string",
+      "enum": ["heart_rate", "spo2", "temperature", "pain_level", "general"],
+      "description": "Métrique concernée par l'alerte"
+    },
+    "threshold": {
+      "type": "object",
+      "description": "Seuil dépassé qui a déclenché l'alerte",
+      "properties": {
+        "value": {
+          "type": "number",
+          "description": "Valeur du seuil"
+        },
+        "operator": {
+          "type": "string",
+          "enum": [">", "<", ">=", "<=", "!="],
+          "description": "Opérateur de comparaison"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unité de mesure"
+        }
+      }
+    },
+    "measured_value": {
+      "type": "number",
+      "description": "Valeur mesurée qui a déclenché l'alerte"
+    },
+    "time_window": {
+      "type": "string",
+      "description": "Fenêtre temporelle d'analyse (ex: 15min, 1h)",
+      "examples": ["15min", "1h", "6h"]
+    },
+    "context": {
+      "type": "object",
+      "description": "Contexte additionnel de l'alerte",
+      "properties": {
+        "recent_vitals": {
+          "type": "array",
+          "items": {
+            "$ref": "vitals-reading.schema.json"
+          }
+        },
+        "chatbot_interaction": {
+          "type": "object",
+          "properties": {
+            "session_id": {
+              "type": "string"
+            },
+            "intent": {
+              "type": "string"
+            },
+            "user_input": {
+              "type": "string"
+            }
+          }
+        },
+        "symptoms_reported": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "recommendations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Recommandations automatiques générées"
+    },
+    "escalation": {
+      "type": "object",
+      "description": "Informations d'escalade",
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "target": {
+          "type": "string",
+          "enum": ["PATIENT", "CAREGIVER", "MEDICAL_TEAM", "EMERGENCY_SERVICES"]
+        },
+        "urgency": {
+          "type": "string",
+          "enum": ["IMMEDIATE", "URGENT", "ROUTINE"]
+        }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "description": "Informations de résolution",
+      "properties": {
+        "resolved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "resolved_by": {
+          "type": "string"
+        },
+        "resolution_notes": {
+          "type": "string"
+        },
+        "follow_up_required": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
+
